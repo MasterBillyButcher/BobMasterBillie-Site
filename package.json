@@ -1,8 +1,0 @@
-{
-  "name": "bobmasterbillie-console",
-  "private": true,
-  "description": "Static dashboard (no build step) + two Vercel Functions in /api for the password-gated reference page. The dashboard itself (index.html, login.html, js/, css/) still needs no build and no dependencies — this file exists only so Vercel installs @supabase/supabase-js for the /api functions.",
-  "dependencies": {
-    "@supabase/supabase-js": "^2"
-  }
-}
