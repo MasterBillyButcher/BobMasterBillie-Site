@@ -3,7 +3,7 @@
 // This file is loaded in the browser, anyone can read it, that's
 // expected: what actually protects the data is the Row Level Security
 // policy in sql/reference-sections.sql, not secrecy of this key.
-const SUPABASE_URL = "https://jboticuqevufjrwjmeyc.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_qTXNTtDxFnay9VmVGJTEMQ_32vo0w_5";
+const SUPABASE_URL = "https://pmubujryzedkaxkakfit.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtdWJ1anJ5emVka2F4a2FrZml0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNzMzMzIsImV4cCI6MjA5Nzk0OTMzMn0.JuslK1ybs23iIg1DF8B37MN3Qff2aNpJPL_W05eCIA4";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
