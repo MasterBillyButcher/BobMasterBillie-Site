@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Settings</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <h1>Settings</h1>
+
+      <section class="settings-section">
+        <h2>Change Password</h2>
+        <form id="change-password-form">
+          <div class="field">
+            <label for="currentPassword">Current password</label>
+            <input id="currentPassword" type="password" autocomplete="current-password" required />
+          </div>
+          <div class="field">
+            <label for="newPassword">New password</label>
+            <input id="newPassword" type="password" autocomplete="new-password" minlength="10" required />
+          </div>
+          <div class="field">
+            <label for="confirmPassword">Confirm new password</label>
+            <input id="confirmPassword" type="password" autocomplete="new-password" minlength="10" required />
+          </div>
+          <button class="primary" type="submit" id="change-password-submit">Update password</button>
+          <p class="error-text" id="change-password-error"></p>
+          <p class="success-text" id="change-password-success"></p>
+        </form>
+      </section>
+    </main>
+  </div>
+  <script src="/js/csrf.js"></script>
+  <script src="/js/nav.js"></script>
+  <script src="/js/settings.js"></script>
+</body>
+</html>
