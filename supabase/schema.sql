@@ -1,5 +1,5 @@
--- Run this in the Supabase SQL editor (or via the CLI) before seeding the
--- initial password with `npm run seed:password`.
+-- Run this in the Supabase SQL editor before seeding the initial
+-- password with `npm run seed:password`.
 
 create table if not exists public.dashboard_auth (
   id integer primary key default 1,
@@ -17,9 +17,3 @@ create table if not exists public.dashboard_auth (
 alter table public.dashboard_auth enable row level security;
 
 -- Intentionally no CREATE POLICY statements here: default-deny.
-
--- Everything else this dashboard stores (stream notes, backlog, custom
--- commands, etc.) can live in additional tables. Apply the same pattern:
--- enable RLS, add no anon/authenticated policies, and read/write only
--- through server.js routes that call requireAuthApi first and use the
--- service-role client from lib/supabase-admin.js.
