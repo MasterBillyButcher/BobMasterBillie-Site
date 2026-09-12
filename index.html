@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BobMasterBillie — Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<style>
+  :root{
+    --bg:#0B0A11;
+    --panel:#141220;
+    --panel-2:#1B1829;
+    --border:#2B2740;
+    --text:#F0EDF8;
+    --text-muted:#9A93B3;
+    --purple:#B084F5;
+    --purple-dim:#7C5CC4;
+    --gold:#F2B640;
+    --red:#E8607A;
+    --green:#3ED598;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;font-size:16px;line-height:1.6;}
+  h1,h2,h3{font-family:'Sora',sans-serif;margin:0;}
+  code,.mono{font-family:'JetBrains Mono',monospace;}
+  a{color:var(--purple);}
+  button{font-family:inherit;}
+
+  .shell{display:flex;min-height:100vh;}
+  .sidebar{width:272px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);position:sticky;top:0;height:100vh;overflow-y:auto;padding:28px 20px 24px;display:flex;flex-direction:column;}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:6px;cursor:pointer;}
+  .brand-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(155deg,var(--purple) 0%,var(--purple-dim) 100%);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:16px;color:#100C1A;flex-shrink:0;}
+  .brand-name{font-family:'Sora',sans-serif;font-weight:700;font-size:17px;letter-spacing:.2px;}
+  .brand-sub{color:var(--text-muted);font-size:13px;margin:2px 0 26px 44px;}
+  .nav-group-label{font-size:11px;color:var(--text-muted);margin:22px 0 8px 10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+  .nav a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text-muted);padding:8px 10px;border-radius:8px;font-size:14.5px;font-weight:500;transition:background .15s ease,color .15s ease;cursor:pointer;}
+  .nav a .num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--purple-dim);flex-shrink:0;width:16px;}
+  .nav a:hover{background:var(--panel-2);color:var(--text);}
+  .nav a.active{background:var(--panel-2);color:var(--text);}
+  .nav a.active .num{color:var(--gold);}
+  .nav .overview-link{margin-bottom:4px;font-weight:600;}
+
+  .sidebar-footer{margin-top:auto;padding-top:20px;border-top:1px solid var(--border);}
+  .lock-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--panel-2);border:1px solid var(--border);color:var(--text-muted);font-weight:600;font-size:13px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:border-color .15s ease,color .15s ease;}
+  .lock-btn:hover{border-color:var(--purple-dim);color:var(--text);}
+  .lock-btn.unlocked{color:var(--gold);border-color:rgba(242,182,64,.4);background:rgba(242,182,64,.08);}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;box-shadow:0 0 0 0 rgba(62,213,152,.6);animation:pulse 2s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(62,213,152,.5);}70%{box-shadow:0 0 0 6px rgba(62,213,152,0);}100%{box-shadow:0 0 0 0 rgba(62,213,152,0);}}
+  .live-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted);padding:8px 10px 2px;}
+
+  main{flex:1;min-width:0;padding:48px clamp(20px,5vw,72px) 100px;max-width:980px;}
+  .menu-toggle{display:none;}
+
+  /* ---------- overview ---------- */
+  .hero{margin-bottom:40px;}
+  .hero .eyebrow-free{color:var(--gold);font-weight:600;font-size:14px;margin-bottom:10px;}
+  .hero h1{font-size:clamp(30px,4vw,42px);font-weight:800;line-height:1.1;letter-spacing:-.5px;}
+  .hero p{color:var(--text-muted);font-size:16.5px;max-width:58ch;margin-top:14px;}
+
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+  .overview-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:22px;cursor:pointer;transition:border-color .15s ease,transform .15s ease;text-align:left;}
+  .overview-card:hover{border-color:var(--purple-dim);transform:translateY(-2px);}
+  .overview-card .oc-icon{width:40px;height:40px;border-radius:10px;background:var(--panel-2);display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:14px;}
+  .overview-card h3{font-size:16px;font-weight:700;margin-bottom:6px;}
+  .overview-card .oc-preview{color:var(--text-muted);font-size:13px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .overview-card .oc-meta{margin-top:14px;font-size:12px;color:var(--purple-dim);font-weight:600;}
+
+  /* ---------- section view ---------- */
+  .breadcrumb{display:flex;align-items:center;gap:6px;color:var(--text-muted);font-size:13.5px;font-weight:600;margin-bottom:22px;cursor:pointer;width:fit-content;}
+  .breadcrumb:hover{color:var(--text);}
+  .section-view-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap;}
+  .section-view-head h2{font-size:30px;font-weight:800;display:flex;align-items:center;gap:14px;letter-spacing:-.3px;}
+  .section-view-head h2 .idx{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--bg);background:var(--purple);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .section-actions{display:flex;gap:8px;flex-shrink:0;}
+
+  h3{font-size:15px;font-weight:700;color:var(--purple-dim);text-transform:uppercase;letter-spacing:.04em;margin:32px 0 14px;}
+  h3:first-of-type{margin-top:0;}
+
+  ul.plain{list-style:none;margin:0 0 4px;padding:0;}
+  ul.plain li{padding:9px 0;border-bottom:1px dashed var(--border);font-size:14.5px;}
+  ul.plain li:last-child{border-bottom:none;}
+
+  .cmd-table{width:100%;border-collapse:collapse;margin-bottom:6px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  .cmd-table th{text-align:left;font-size:11.5px;font-weight:600;color:var(--text-muted);padding:0 14px 8px;border-bottom:1px solid var(--border);}
+  .cmd-table td{padding:11px 14px;font-size:14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .cmd-table tr:last-child td{border-bottom:none;}
+  .cmd-table td.cmd{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gold);white-space:nowrap;}
+  .cmd-table td.note{color:var(--text-muted);font-size:13px;}
+  .cmd-wrap{overflow-x:auto;border-radius:var(--radius);margin-bottom:28px;}
+
+  .status-table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:10px;}
+  .status-table td{padding:14px 16px;font-size:14.5px;border-bottom:1px solid var(--border);}
+  .status-table tr:last-child td{border-bottom:none;}
+  .status-table td:first-child{font-weight:600;width:40%;}
+  .status-table td.dim{color:var(--text-muted);}
+  .pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;}
+  .pill.gold{background:rgba(242,182,64,.14);color:var(--gold);}
+  .pill.grey{background:rgba(154,147,179,.14);color:var(--text-muted);}
+
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;}
+  .card h4{font-size:15px;margin:0 0 10px;font-family:'Sora',sans-serif;font-weight:700;}
+  .card p{margin:0 0 10px;font-size:14.5px;}
+  .card p:last-child{margin-bottom:0;}
+  .card ul{margin:0 0 10px;padding-left:20px;font-size:14.5px;}
+  .card .quote{color:var(--text-muted);font-style:italic;}
+  .card .sign{color:var(--purple);font-weight:700;margin-top:14px;}
+
+  .copy-btn,.icon-btn{display:inline-flex;align-items:center;gap:6px;background:var(--panel-2);border:1px solid var(--border);color:var(--text-muted);font-size:12.5px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer;transition:color .15s ease,border-color .15s ease;}
+  .copy-btn:hover,.icon-btn:hover{color:var(--text);border-color:var(--purple-dim);}
+  .icon-btn.danger:hover{color:var(--red);border-color:rgba(232,96,122,.5);}
+  .copy-btn{margin-top:6px;}
+
+  .note-block{border-left:3px solid var(--gold);background:rgba(242,182,64,.06);padding:12px 16px;font-size:13.5px;color:var(--text-muted);border-radius:0 8px 8px 0;margin-bottom:24px;}
+  .empty-state{color:var(--text-muted);font-size:14.5px;padding:20px 0;}
+
+  footer{border-top:1px solid var(--border);padding:32px 0 0;margin-top:60px;color:var(--text-muted);font-size:13px;}
+
+  /* ---------- edit mode ---------- */
+  .edit-form{background:var(--panel);border:1px solid var(--purple-dim);border-radius:var(--radius);padding:20px;margin-bottom:10px;}
+  .edit-form label{display:block;font-size:12px;color:var(--text-muted);font-weight:600;margin:0 0 6px;}
+  .edit-form input[type=text]{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:7px;font-size:15px;margin-bottom:16px;font-family:'Sora',sans-serif;}
+  .edit-form textarea{width:100%;min-height:260px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.55;resize:vertical;}
+  .edit-form .hint{color:var(--text-muted);font-size:12px;margin:8px 0 16px;}
+  .edit-form .row{display:flex;gap:10px;margin-top:6px;}
+  .btn{border:none;border-radius:8px;padding:10px 18px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;}
+  .btn-primary{background:var(--purple);color:#15101F;}
+  .btn-primary:hover{background:#c19dff;}
+  .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-muted);}
+  .btn-ghost:hover{color:var(--text);border-color:var(--purple-dim);}
+  .btn:disabled{opacity:.5;cursor:default;}
+
+  .add-section-btn{width:100%;margin-top:16px;background:transparent;border:1px dashed var(--border);color:var(--text-muted);font-weight:600;font-size:13px;padding:12px;border-radius:8px;cursor:pointer;}
+  .add-section-btn:hover{border-color:var(--purple-dim);color:var(--text);}
+
+  /* ---------- live counters ---------- */
+  .counters-block{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+  .counter-row{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;}
+  .counter-row .counter-label{font-size:14.5px;font-weight:600;}
+  .counter-row .counter-controls{display:flex;align-items:center;gap:12px;}
+  .counter-row .counter-value{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;color:var(--gold);min-width:2ch;text-align:center;}
+  .counter-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--panel-2);color:var(--text-muted);font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:color .15s ease,border-color .15s ease;}
+  .counter-btn:hover{color:var(--text);border-color:var(--purple-dim);}
+  .counter-btn:disabled{opacity:.35;cursor:default;}
+  .counter-btn.minus:hover{color:var(--red);border-color:rgba(232,96,122,.5);}
+  .counter-btn.plus:hover{color:var(--gold);border-color:rgba(242,182,64,.5);}
+  .counter-hint{color:var(--text-muted);font-size:12px;margin:-12px 0 20px;}
+
+  /* ---------- movie backlog ---------- */
+  .backlog-summary{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+  .backlog-count-badge{font-family:'JetBrains Mono',monospace;background:var(--panel-2);border:1px solid var(--border);color:var(--gold);font-size:13px;font-weight:700;padding:5px 12px;border-radius:99px;}
+  .backlog-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+  .backlog-item{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;}
+  .backlog-item .bi-title{font-size:14.5px;font-weight:500;}
+  .backlog-add-row{display:flex;gap:10px;}
+  .backlog-add-row input{flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:8px;font-size:14.5px;font-family:'Manrope',sans-serif;}
+  .backlog-add-row input:focus{outline:none;border-color:var(--purple-dim);}
+
+  /* ---------- modal ---------- */
+  .modal-scrim{position:fixed;inset:0;background:rgba(6,5,10,.7);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .modal-scrim.show{display:flex;}
+  .modal{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px;width:100%;max-width:360px;}
+  .modal h3{margin:0 0 6px;font-size:18px;text-transform:none;letter-spacing:0;color:var(--text);}
+  .modal p{color:var(--text-muted);font-size:13.5px;margin:0 0 18px;}
+  .modal input[type=password]{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:11px 13px;border-radius:8px;font-size:15px;margin-bottom:14px;}
+  .modal .error{color:var(--red);font-size:12.5px;margin:-6px 0 14px;min-height:16px;}
+  .modal .row{display:flex;gap:10px;justify-content:flex-end;}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel-2);border:1px solid var(--border);color:var(--text);padding:12px 20px;border-radius:9px;font-size:13.5px;font-weight:600;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast.error{border-color:rgba(232,96,122,.5);color:var(--red);}
+
+  @media (max-width:860px){
+    .sidebar{position:fixed;z-index:20;left:0;top:0;height:100vh;transform:translateX(-100%);transition:transform .22s ease;box-shadow:20px 0 40px rgba(0,0,0,.4);}
+    .sidebar.open{transform:translateX(0);}
+    main{padding:20px 20px 100px;}
+    .menu-toggle{display:flex;align-items:center;gap:8px;position:sticky;top:14px;z-index:15;width:fit-content;background:var(--panel);border:1px solid var(--border);color:var(--text);font-weight:600;font-size:13px;padding:9px 14px;border-radius:8px;cursor:pointer;margin-bottom:18px;}
+    .scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:19;}
+    .scrim.show{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<div class="scrim" id="scrim"></div>
+
+<div class="modal-scrim" id="pwModal">
+  <div class="modal">
+    <h3>Unlock editing</h3>
+    <p>Enter the shared password to edit sections, adjust counters, or manage the movie backlog.</p>
+    <input type="password" id="pwInput" placeholder="Password" autocomplete="current-password">
+    <div class="error" id="pwError"></div>
+    <div class="row">
+      <button class="btn btn-ghost" id="pwCancel">Cancel</button>
+      <button class="btn btn-primary" id="pwSubmit">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand" id="brandHome">
+      <div class="brand-mark">BB</div>
+      <div class="brand-name">BobMasterBillie</div>
+    </div>
+    <div class="brand-sub">Reference &amp; templates</div>
+
+    <div class="nav-group-label">Sections</div>
+    <nav class="nav" id="navList"></nav>
+
+    <div class="sidebar-footer">
+      <div class="live-row"><span class="live-dot"></span>Live — updates for everyone instantly</div>
+      <button class="lock-btn" id="lockBtn">🔒 Unlock editing</button>
+    </div>
+  </aside>
+
+  <main>
+    <button class="menu-toggle" id="menuToggle">☰ Sections</button>
+    <div id="viewRoot"></div>
+    <footer>
+      Internal reference for BobMasterBillie moderation &amp; community management.
+    </footer>
+  </main>
+</div>
+
+<script>
+const SECTION_ORDER = ['prompts','veto','backlog','twitch','nightbot','custom','outreach'];
+
+const state = {
+  sections: new Map(),    // slug -> {slug, title, content, updated_at}
+  counters: new Map(),    // id -> {id, section_slug, label, value}
+  backlogItems: [],       // [{id, title, created_at}]
+  editing: false,
+  editingSlug: null,      // slug currently open in a raw-HTML edit form, or "__new__"
+  view: 'overview',       // 'overview' | a section slug
+};
+
+const els = {
+  navList: document.getElementById('navList'),
+  viewRoot: document.getElementById('viewRoot'),
+  lockBtn: document.getElementById('lockBtn'),
+  brandHome: document.getElementById('brandHome'),
+  pwModal: document.getElementById('pwModal'),
+  pwInput: document.getElementById('pwInput'),
+  pwError: document.getElementById('pwError'),
+  pwSubmit: document.getElementById('pwSubmit'),
+  pwCancel: document.getElementById('pwCancel'),
+  toast: document.getElementById('toast'),
+  sidebar: document.getElementById('sidebar'),
+  menuToggle: document.getElementById('menuToggle'),
+  scrim: document.getElementById('scrim'),
+};
+
+function showToast(msg, isError) {
+  els.toast.textContent = msg;
+  els.toast.classList.toggle('error', !!isError);
+  els.toast.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => els.toast.classList.remove('show'), 2600);
+}
+
+function orderedSlugs() {
+  const known = SECTION_ORDER.filter(s => state.sections.has(s));
+  const extra = [...state.sections.keys()]
+    .filter(s => !SECTION_ORDER.includes(s))
+    .sort((a, b) => (state.sections.get(a).title || '').localeCompare(state.sections.get(b).title || ''));
+  return [...known, ...extra];
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function stripTagsPreview(html, maxLen) {
+  const text = String(html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  return text.length > maxLen ? text.slice(0, maxLen).trim() + '…' : text;
+}
+
+function iconForTitle(title) {
+  // pull a leading emoji off the title for the overview card icon,
+  // fall back to a generic mark if there isn't one
+  const match = String(title).match(/^(\p{Extended_Pictographic}\uFE0F?)/u);
+  return match ? match[1] : '📄';
+}
+
+function titleWithoutIcon(title) {
+  return String(title).replace(/^(\p{Extended_Pictographic}\uFE0F?)\s*/u, '');
+}
+
+function goToView(view) {
+  state.view = view;
+  state.editingSlug = null;
+  render();
+  window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+  closeMenu();
+}
+
+// ---------- counters ----------
+function countersForSlug(slug) {
+  return [...state.counters.values()]
+    .filter(c => c.section_slug === slug)
+    .sort((a, b) => a.id.localeCompare(b.id));
+}
+
+function counterRowHtml(c) {
+  const disabled = state.editing ? '' : 'disabled';
+  return `
+    <div class="counter-row">
+      <div class="counter-label">${escapeHtml(c.label)}</div>
+      <div class="counter-controls">
+        <button class="counter-btn minus" data-counter-adjust="${c.id}:-1" ${disabled}>−</button>
+        <div class="counter-value">${c.value}</div>
+        <button class="counter-btn plus" data-counter-adjust="${c.id}:1" ${disabled}>+</button>
+      </div>
+    </div>`;
+}
+
+function countersBlockHtml(slug) {
+  const counters = countersForSlug(slug);
+  if (!counters.length) return '';
+  const hint = state.editing ? '' : '<div class="counter-hint">Unlock editing to change these.</div>';
+  return `<div class="counters-block">${counters.map(counterRowHtml).join('')}</div>${hint}`;
+}
+
+// ---------- movie backlog (real items, not a section body) ----------
+function backlogBlockHtml() {
+  const items = state.backlogItems;
+  const list = items.length
+    ? `<div class="backlog-list">${items.map(item => `
+        <div class="backlog-item">
+          <div class="bi-title">🎬 ${escapeHtml(item.title)}</div>
+          ${state.editing ? `<button class="icon-btn danger" data-backlog-remove="${item.id}">Remove</button>` : ''}
+        </div>`).join('')}</div>`
+    : '<div class="empty-state">No movies queued yet.</div>';
+
+  const addRow = state.editing ? `
+    <div class="backlog-add-row">
+      <input type="text" id="backlogAddInput" placeholder="Add a movie or show title…" maxlength="200">
+      <button class="btn btn-primary" id="backlogAddBtn">Add</button>
+    </div>` : '';
+
+  return `
+    <div class="backlog-summary">
+      <span class="backlog-count-badge">${items.length} queued</span>
+    </div>
+    ${list}
+    ${addRow}`;
+}
+
+// ---------- overview ----------
+function overviewHtml() {
+  const slugs = orderedSlugs();
+  const cards = slugs.map(slug => {
+    const s = state.sections.get(slug);
+    const icon = iconForTitle(s.title);
+    const label = titleWithoutIcon(s.title);
+    let previewText;
+    let meta = '';
+    if (slug === 'backlog') {
+      previewText = state.backlogItems.length
+        ? state.backlogItems.slice(0, 3).map(i => i.title).join(' · ')
+        : 'No movies queued yet';
+      meta = `${state.backlogItems.length} queued`;
+    } else {
+      previewText = stripTagsPreview(s.content, 90) || 'Nothing here yet';
+      const counters = countersForSlug(slug);
+      if (counters.length) meta = counters.map(c => `${c.label}: ${c.value}`).join(' · ');
+    }
+    return `
+      <button class="overview-card" data-goto="${slug}">
+        <div class="oc-icon">${icon}</div>
+        <h3>${escapeHtml(label)}</h3>
+        <div class="oc-preview">${escapeHtml(previewText)}</div>
+        ${meta ? `<div class="oc-meta">${escapeHtml(meta)}</div>` : ''}
+      </button>`;
+  }).join('');
+
+  const addCard = state.editing ? `
+    <button class="overview-card" id="addSectionCard" style="display:flex;flex-direction:column;align-items:center;justify-content:center;border-style:dashed;color:var(--text-muted);">
+      <div style="font-size:28px;margin-bottom:8px;">+</div>
+      <div style="font-size:13.5px;font-weight:600;">Add a section</div>
+    </button>` : '';
+
+  return `
+    <div class="hero">
+      <div class="eyebrow-free">Internal reference</div>
+      <h1>Command sheets, live prompts,<br>and outreach for BobMasterBillie.</h1>
+      <p>Everything a moderator needs mid-shift. Pick a section below — edits save to the database and show up for anyone viewing this page, live.</p>
+    </div>
+    <div class="card-grid">${cards}${addCard}</div>
+    ${state.editingSlug === '__new__' ? `<div style="margin-top:20px">${newSectionFormHtml()}</div>` : ''}`;
+}
+
+// ---------- single section view ----------
+function sectionViewHtml(slug) {
+  const s = state.sections.get(slug);
+  if (!s) return `<div class="note-block">Section not found.</div><div class="breadcrumb" data-goto="overview">← All sections</div>`;
+
+  const slugs = orderedSlugs();
+  const idx = slugs.indexOf(slug) + 1;
+  const isEditingThis = state.editingSlug === slug;
+
+  const actions = state.editing ? `
+    <div class="section-actions">
+      <button class="icon-btn" data-edit="${slug}">Edit</button>
+      <button class="icon-btn danger" data-delete="${slug}">Delete</button>
+    </div>` : '';
+
+  const counters = isEditingThis ? '' : countersBlockHtml(slug);
+  const backlog = (slug === 'backlog' && !isEditingThis) ? backlogBlockHtml() : '';
+  const body = isEditingThis
+    ? editFormHtml(s)
+    : (slug === 'backlog' ? (s.content || '') : (s.content || '<div class="empty-state">Nothing here yet.</div>'));
+
+  return `
+    <div class="breadcrumb" data-goto="overview">← All sections</div>
+    <div class="section-view-head">
+      <h2><span class="idx">${idx}</span>${escapeHtml(s.title)}</h2>
+      ${actions}
+    </div>
+    ${counters}
+    ${backlog}
+    <div class="section-body">${body}</div>`;
+}
+
+function render() {
+  const slugs = orderedSlugs();
+
+  // ---- sidebar nav ----
+  els.navList.innerHTML = slugs.map((slug, i) => {
+    const s = state.sections.get(slug);
+    const num = String(i + 1).padStart(2, '0');
+    const active = state.view === slug ? 'active' : '';
+    return `<a class="${active}" data-goto="${slug}"><span class="num">${num}</span>${escapeHtml(s.title)}</a>`;
+  }).join('');
+
+  els.lockBtn.textContent = state.editing ? '🔓 Editing unlocked' : '🔒 Unlock editing';
+  els.lockBtn.classList.toggle('unlocked', state.editing);
+
+  // ---- main view ----
+  els.viewRoot.innerHTML = state.view === 'overview'
+    ? overviewHtml()
+    : sectionViewHtml(state.view);
+
+  attachRuntimeHandlers();
+}
+
+function editFormHtml(s) {
+  return `
+    <div class="edit-form">
+      <label for="title-${s.slug}">Section title</label>
+      <input type="text" id="title-${s.slug}" value="${escapeHtml(s.title)}">
+      <label for="content-${s.slug}">Content (raw HTML)</label>
+      <textarea id="content-${s.slug}">${escapeHtml(s.content || '')}</textarea>
+      <div class="hint">This is raw HTML, same as the rest of the page uses — tables, lists, etc. all work.</div>
+      <div class="row">
+        <button class="btn btn-ghost" data-cancel-edit>Cancel</button>
+        <button class="btn btn-primary" data-save="${s.slug}">Save</button>
+      </div>
+    </div>`;
+}
+
+function newSectionFormHtml() {
+  return `
+    <div class="edit-form">
+      <label for="new-slug">URL slug (lowercase, letters/numbers/hyphens only)</label>
+      <input type="text" id="new-slug" placeholder="e.g. discord-roles">
+      <label for="new-title">Section title</label>
+      <input type="text" id="new-title" placeholder="e.g. Discord Roles">
+      <label for="new-content">Content (raw HTML)</label>
+      <textarea id="new-content" placeholder="&lt;p&gt;Your content here&lt;/p&gt;"></textarea>
+      <div class="row">
+        <button class="btn btn-ghost" data-cancel-edit>Cancel</button>
+        <button class="btn btn-primary" data-save-new>Create section</button>
+      </div>
+    </div>`;
+}
+
+function attachRuntimeHandlers() {
+  document.querySelectorAll('[data-goto]').forEach(el => {
+    el.addEventListener('click', () => goToView(el.dataset.goto));
+  });
+
+  els.viewRoot.querySelectorAll('[data-edit]').forEach(btn => {
+    btn.addEventListener('click', () => { state.editingSlug = btn.dataset.edit; render(); });
+  });
+  els.viewRoot.querySelectorAll('[data-delete]').forEach(btn => {
+    btn.addEventListener('click', () => deleteSection(btn.dataset.delete));
+  });
+  els.viewRoot.querySelectorAll('[data-cancel-edit]').forEach(btn => {
+    btn.addEventListener('click', () => { state.editingSlug = null; render(); });
+  });
+  els.viewRoot.querySelectorAll('[data-save]').forEach(btn => {
+    btn.addEventListener('click', () => saveSection(btn.dataset.save));
+  });
+  const addBtn = document.getElementById('addSectionCard');
+  if (addBtn) addBtn.addEventListener('click', () => { state.editingSlug = '__new__'; render(); });
+  const saveNewBtn = document.querySelector('[data-save-new]');
+  if (saveNewBtn) saveNewBtn.addEventListener('click', saveNewSection);
+
+  els.viewRoot.querySelectorAll('[data-counter-adjust]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const [id, delta] = btn.dataset.counterAdjust.split(':');
+      adjustCounter(id, parseInt(delta, 10));
+    });
+  });
+
+  const backlogAddBtn = document.getElementById('backlogAddBtn');
+  if (backlogAddBtn) {
+    backlogAddBtn.addEventListener('click', addBacklogItem);
+    const input = document.getElementById('backlogAddInput');
+    if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') addBacklogItem(); });
+  }
+  els.viewRoot.querySelectorAll('[data-backlog-remove]').forEach(btn => {
+    btn.addEventListener('click', () => removeBacklogItem(btn.dataset.backlogRemove));
+  });
+
+  // copy-to-clipboard on outreach cards (works regardless of edit mode)
+  els.viewRoot.querySelectorAll('.card').forEach(card => {
+    if (card.querySelector('.copy-btn') || !card.id) return;
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy text';
+    btn.addEventListener('click', () => {
+      navigator.clipboard.writeText(card.innerText.trim()).then(() => {
+        btn.textContent = 'Copied ✓';
+        setTimeout(() => btn.textContent = 'Copy text', 1500);
+      });
+    });
+    card.appendChild(btn);
+  });
+}
+
+function editPassword() {
+  return sessionStorage.getItem('bb_edit_pw') || '';
+}
+
+async function apiCall(path, payload) {
+  const res = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  let data;
+  try { data = await res.json(); } catch { data = { ok: false, error: 'Unexpected server response' }; }
+  return { status: res.status, data };
+}
+
+async function saveSection(slug) {
+  const title = document.getElementById(`title-${slug}`).value.trim();
+  const content = document.getElementById(`content-${slug}`).value;
+  if (!title) { showToast('Title is required', true); return; }
+
+  const { data } = await apiCall('/api/save-section', {
+    password: editPassword(), action: 'save', slug, title, content,
+  });
+
+  if (data.ok) {
+    state.sections.set(slug, { ...state.sections.get(slug), title, content });
+    state.editingSlug = null;
+    render();
+    showToast('Saved');
+  } else {
+    showToast(data.error || 'Save failed', true);
+  }
+}
+
+async function saveNewSection() {
+  const slug = document.getElementById('new-slug').value.trim().toLowerCase();
+  const title = document.getElementById('new-title').value.trim();
+  const content = document.getElementById('new-content').value;
+  if (!slug || !title) { showToast('Slug and title are required', true); return; }
+
+  const { data } = await apiCall('/api/save-section', {
+    password: editPassword(), action: 'save', slug, title, content,
+  });
+
+  if (data.ok) {
+    state.sections.set(slug, { slug, title, content });
+    state.editingSlug = null;
+    render();
+    showToast('Section created');
+  } else {
+    showToast(data.error || 'Create failed', true);
+  }
+}
+
+async function deleteSection(slug) {
+  if (!confirm(`Delete the "${state.sections.get(slug).title}" section? This can't be undone.`)) return;
+
+  const { data } = await apiCall('/api/save-section', {
+    password: editPassword(), action: 'delete', slug,
+  });
+
+  if (data.ok) {
+    state.sections.delete(slug);
+    if (state.view === slug) state.view = 'overview';
+    render();
+    showToast('Deleted');
+  } else {
+    showToast(data.error || 'Delete failed', true);
+  }
+}
+
+async function adjustCounter(id, delta) {
+  // optimistic local update so the click feels instant; the realtime
+  // subscription reconciles with the real server value right after,
+  // correcting it if this optimistic guess was wrong (e.g. someone
+  // else clicked at the same moment, or GREATEST(0, ...) clamped it
+  // server-side).
+  const current = state.counters.get(id);
+  if (current) {
+    state.counters.set(id, { ...current, value: Math.max(0, current.value + delta) });
+    render();
+  }
+
+  const { data } = await apiCall('/api/adjust-counter', {
+    password: editPassword(), id, delta,
+  });
+
+  if (data.ok) {
+    state.counters.set(id, { ...state.counters.get(id), value: data.value });
+    render();
+  } else {
+    showToast(data.error || 'Counter update failed', true);
+    loadCounters(); // roll back to the real value
+  }
+}
+
+async function addBacklogItem() {
+  const input = document.getElementById('backlogAddInput');
+  const title = input.value.trim();
+  if (!title) return;
+
+  const { data } = await apiCall('/api/backlog', {
+    password: editPassword(), action: 'add', title,
+  });
+
+  if (data.ok) {
+    state.backlogItems.push({ id: data.id, title: data.title, created_at: new Date().toISOString() });
+    render();
+    const freshInput = document.getElementById('backlogAddInput');
+    if (freshInput) freshInput.focus();
+    showToast('Added');
+  } else {
+    showToast(data.error || 'Could not add', true);
+  }
+}
+
+async function removeBacklogItem(id) {
+  const item = state.backlogItems.find(i => i.id === id);
+  if (item && !confirm(`Remove "${item.title}" from the backlog?`)) return;
+
+  const { data } = await apiCall('/api/backlog', {
+    password: editPassword(), action: 'remove', id,
+  });
+
+  if (data.ok) {
+    state.backlogItems = state.backlogItems.filter(i => i.id !== id);
+    render();
+    showToast('Removed');
+  } else {
+    showToast(data.error || 'Could not remove', true);
+  }
+}
+
+// ---------- password unlock modal ----------
+els.lockBtn.addEventListener('click', () => {
+  if (state.editing) {
+    state.editing = false;
+    state.editingSlug = null;
+    sessionStorage.removeItem('bb_edit_pw');
+    render();
+    return;
+  }
+  els.pwInput.value = '';
+  els.pwError.textContent = '';
+  els.pwModal.classList.add('show');
+  setTimeout(() => els.pwInput.focus(), 50);
+});
+
+els.pwCancel.addEventListener('click', () => els.pwModal.classList.remove('show'));
+els.pwModal.addEventListener('click', (e) => { if (e.target === els.pwModal) els.pwModal.classList.remove('show'); });
+
+async function attemptUnlock() {
+  const pw = els.pwInput.value;
+  if (!pw) return;
+  els.pwSubmit.disabled = true;
+  const { data } = await apiCall('/api/verify-password', { password: pw });
+  els.pwSubmit.disabled = false;
+  if (data.ok) {
+    sessionStorage.setItem('bb_edit_pw', pw);
+    state.editing = true;
+    els.pwModal.classList.remove('show');
+    render();
+    showToast('Editing unlocked');
+  } else {
+    els.pwError.textContent = data.error && data.error.includes('configured')
+      ? data.error
+      : 'Incorrect password';
+  }
+}
+els.pwSubmit.addEventListener('click', attemptUnlock);
+els.pwInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') attemptUnlock(); });
+
+// ---------- mobile nav ----------
+function closeMenu(){ els.sidebar.classList.remove('open'); els.scrim.classList.remove('show'); }
+els.menuToggle.addEventListener('click', () => { els.sidebar.classList.toggle('open'); els.scrim.classList.toggle('show'); });
+els.scrim.addEventListener('click', closeMenu);
+els.brandHome.addEventListener('click', () => goToView('overview'));
+
+// ---------- data loading + realtime ----------
+async function loadSections() {
+  const { data, error } = await supabaseClient.from('reference_sections').select('*');
+  if (error) {
+    els.viewRoot.innerHTML = `<div class="note-block">Couldn't load content: ${escapeHtml(error.message)}. Check that sql/reference-sections.sql has been run in Supabase.</div>`;
+    return;
+  }
+  state.sections = new Map(data.map(row => [row.slug, row]));
+  render();
+}
+
+async function loadCounters() {
+  const { data, error } = await supabaseClient.from('reference_counters').select('*');
+  if (error) {
+    console.warn('Could not load reference_counters:', error.message, '— has sql/reference-counters.sql been run?');
+    return;
+  }
+  state.counters = new Map(data.map(row => [row.id, row]));
+  render();
+}
+
+async function loadBacklogItems() {
+  const { data, error } = await supabaseClient.from('backlog_items').select('*').order('created_at', { ascending: true });
+  if (error) {
+    console.warn('Could not load backlog_items:', error.message, '— has sql/backlog-items.sql been run?');
+    return;
+  }
+  state.backlogItems = data;
+  render();
+}
+
+function subscribeRealtime() {
+  supabaseClient
+    .channel('reference_sections_changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'reference_sections' }, () => {
+      // Don't refetch while someone's mid-edit locally, or their draft
+      // gets discarded out from under them.
+      if (!state.editingSlug) loadSections();
+    })
+    .subscribe();
+
+  supabaseClient
+    .channel('reference_counters_changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'reference_counters' }, () => loadCounters())
+    .subscribe();
+
+  supabaseClient
+    .channel('backlog_items_changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'backlog_items' }, () => loadBacklogItems())
+    .subscribe();
+}
+
+// restore an unlocked session (password only lives in sessionStorage,
+// cleared when the tab closes; the password itself is re-checked
+// server-side on every write, this is just a UX convenience so the
+// modal isn't required for every single edit)
+if (sessionStorage.getItem('bb_edit_pw')) {
+  state.editing = true;
+}
+
+loadSections();
+loadCounters();
+loadBacklogItems();
+subscribeRealtime();
+</script>
+
+</body>
+</html>
