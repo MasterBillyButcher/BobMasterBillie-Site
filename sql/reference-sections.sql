@@ -41,9 +41,9 @@ INSERT INTO reference_sections (slug, title, content) VALUES
 
 ('prompts', 'Live stream prompts', $$<h3>🟣 Twitch Channel</h3>
 <ul class="plain">
-  <li>• Will We Complete Lvl 1 Hype Train? 🚂</li>
-  <li>• Will We Complete Lvl 1 Treasure Train? 🎁</li>
-  <li>• /announcepurple 🎯 SATTA LIVE — Make your predictions now!</li>
+  <li>Will We Complete Lvl 1 Hype Train? 🚂</li>
+  <li>Will We Complete Lvl 1 Treasure Train? 🎁</li>
+  <li>/announcepurple 🎯 SATTA LIVE — Make your predictions now!</li>
 </ul>
 <h3>🟣 TimepassTime</h3>
 <ul class="plain">
@@ -51,9 +51,9 @@ INSERT INTO reference_sections (slug, title, content) VALUES
 </ul>
 <p><strong>📌 Prediction Session</strong></p>
 <ul class="plain">
-  <li>• Each prediction is open for 5 minutes.</li>
-  <li>• New predictions every 15 minutes.</li>
-  <li>• Don't miss your chance to vote and see what happens! 🎉</li>
+  <li>Each prediction is open for 5 minutes.</li>
+  <li>New predictions every 15 minutes.</li>
+  <li>Don't miss your chance to vote and see what happens! 🎉</li>
 </ul>
 <div class="msg-block">🚨 No stream tonight, y'all.<br>💜 He'll see everyone tomorrow night!</div>
 <div class="msg-block">💬 Stream chat will still happen at the usual time.<br>⏳ Wait for it 💜</div>$$),
@@ -191,10 +191,10 @@ INSERT INTO reference_sections (slug, title, content) VALUES
   <p>I'm <strong>@BobMasterBillie</strong> — experienced Discord mod ready to take your server to the next level!</p>
   <p>💪 What I do:</p>
   <ul>
-    <li>• Keep chats safe, friendly &amp; drama-free ✅</li>
-    <li>• Expert in server setup, roles, channels &amp; bots 🤖</li>
-    <li>• Run polls, events &amp; engagement to grow activity 🎉</li>
-    <li>• Reliable &amp; always active — no downtime</li>
+    <li>Keep chats safe, friendly &amp; drama-free ✅</li>
+    <li>Expert in server setup, roles, channels &amp; bots 🤖</li>
+    <li>Run polls, events &amp; engagement to grow activity 🎉</li>
+    <li>Reliable &amp; always active — no downtime</li>
   </ul>
   <p class="quote">I don't just moderate — I <strong>boost community engagement and make your server thrive</strong>.</p>
   <p class="quote">Let's chat so I can start helping your community shine! 💬</p>
@@ -206,10 +206,10 @@ INSERT INTO reference_sections (slug, title, content) VALUES
   <p>I'm <strong>@BobMasterBillie</strong> — your next mod who keeps streams smooth, safe &amp; engaging!</p>
   <p>💪 What I do:</p>
   <ul>
-    <li>• Spam-free, positive chat moderation ✅</li>
-    <li>• Nightbot, MEE6, Dyno &amp; StreamElements expert 🤖</li>
-    <li>• Run polls, games &amp; chat prompts to increase viewer interaction 🎮</li>
-    <li>• Calm, reliable &amp; always present during streams</li>
+    <li>Spam-free, positive chat moderation ✅</li>
+    <li>Nightbot, MEE6, Dyno &amp; StreamElements expert 🤖</li>
+    <li>Run polls, games &amp; chat prompts to increase viewer interaction 🎮</li>
+    <li>Calm, reliable &amp; always present during streams</li>
   </ul>
   <p class="quote">I don't just moderate — I <strong>enhance your streams and grow your community</strong>.</p>
   <p class="quote">Can we chat about me joining your team? 💬</p>

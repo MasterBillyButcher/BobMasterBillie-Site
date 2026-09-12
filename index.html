@@ -601,7 +601,7 @@ function attachRuntimeHandlers() {
 // custom commands so the same command or message doesn't have to be
 // retyped every time it's sent in chat.
 function enhanceCopyableContent() {
-  function addCopyBtn(el, getText) {
+  function addCopyBtn(el, text) {
     if (el.querySelector('.line-copy-btn')) return;
     const btn = document.createElement('button');
     btn.className = 'line-copy-btn';
@@ -610,7 +610,7 @@ function enhanceCopyableContent() {
     btn.textContent = '⧉';
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      navigator.clipboard.writeText(getText()).then(() => {
+      navigator.clipboard.writeText(text).then(() => {
         btn.textContent = '✓';
         btn.classList.add('copied');
         setTimeout(() => { btn.textContent = '⧉'; btn.classList.remove('copied'); }, 1200);
@@ -619,13 +619,20 @@ function enhanceCopyableContent() {
     el.appendChild(btn);
   }
 
+  // li text never contains <br>, so plain textContent is exact and
+  // captured before the button exists — nothing to strip back out.
   els.viewRoot.querySelectorAll('ul.plain li').forEach(li => {
     li.classList.add('copy-line');
-    addCopyBtn(li, () => li.textContent.replace('⧉', '').replace('✓', '').trim());
+    addCopyBtn(li, li.textContent.trim());
   });
 
+  // msg-block content uses <br> for line breaks inside a multi-line
+  // chat message. textContent would silently glue those lines
+  // together with no space at all; innerText correctly turns each
+  // <br> into a real newline in the copied text, same as what's
+  // visually on screen.
   els.viewRoot.querySelectorAll('.msg-block').forEach(block => {
-    addCopyBtn(block, () => block.innerText.replace('⧉', '').replace('✓', '').trim());
+    addCopyBtn(block, block.innerText.trim());
   });
 }
 
