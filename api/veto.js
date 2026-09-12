@@ -11,6 +11,7 @@
 // race each other into a wrong number.
 
 const { createClient } = require("@supabase/supabase-js");
+const { checkRateLimit, recordFailedAttempt } = require("./_lib/rate-limit.js");
 
 const ID_PATTERN = /^[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$/;
 
@@ -32,6 +33,14 @@ module.exports = async (req, res) => {
     return;
   }
 
+  const supabase = createClient(supabaseUrl, serviceRoleKey);
+
+  const { allowed, ip } = await checkRateLimit(supabase, req);
+  if (!allowed) {
+    res.status(429).json({ ok: false, error: "Too many attempts. Try again in a few minutes." });
+    return;
+  }
+
   let body = req.body;
   if (typeof body === "string") {
     try { body = JSON.parse(body); } catch { body = {}; }
@@ -39,11 +48,11 @@ module.exports = async (req, res) => {
   body = body || {};
 
   if (body.password !== editPassword) {
+    await recordFailedAttempt(supabase, ip);
     res.status(401).json({ ok: false, error: "Incorrect password" });
     return;
   }
 
-  const supabase = createClient(supabaseUrl, serviceRoleKey);
   const action = body.action;
 
   if (action === "add") {

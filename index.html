@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/dompurify@3/dist/purify.min.js"></script>
 <script src="js/config.js"></script>
 <style>
   :root{
@@ -311,6 +312,30 @@ function titleWithoutIcon(title) {
 
 function totalVetoPower() {
   return state.vetoEntries.reduce((sum, e) => sum + (e.veto_count || 0), 0);
+}
+
+// Content in reference_sections is raw HTML, editable by anyone with
+// the shared password. If that password is ever guessed or leaked,
+// the worst case shouldn't be "arbitrary JavaScript runs in every
+// visitor's browser" — so every bit of stored content is sanitized
+// here, at load/render time, against an allowlist matching exactly
+// what this site's own content actually uses (the tags/classes seen
+// throughout sql/reference-sections.sql and the CSS above). Anything
+// outside that allowlist — <script>, event handler attributes,
+// javascript: URLs, iframes, etc. — is stripped regardless of what
+// got saved to the database. Sanitizing on render (not on save) means
+// even old content saved before this existed is protected the next
+// time anyone loads the page.
+function sanitizeContent(html) {
+  return DOMPurify.sanitize(html || '', {
+    ALLOWED_TAGS: [
+      'h3', 'h4', 'p', 'div', 'span', 'strong', 'em', 'br', 'code',
+      'ul', 'ol', 'li', 'a',
+      'table', 'thead', 'tbody', 'tr', 'th', 'td',
+    ],
+    ALLOWED_ATTR: ['class', 'id', 'href'],
+    ALLOWED_URI_REGEXP: /^(?:https?:)?\/\//i, // no javascript:, data:, etc.
+  });
 }
 
 function goToView(view) {
@@ -619,11 +644,18 @@ function enhanceCopyableContent() {
     el.appendChild(btn);
   }
 
-  // li text never contains <br>, so plain textContent is exact and
-  // captured before the button exists — nothing to strip back out.
+  // li text never contains <br>, so plain textContent is exact.
+  // Command/prompt lines follow a "command → description" pattern —
+  // the description after the arrow is there to explain what the
+  // command does, not something anyone would actually paste into
+  // chat, so only the part before " → " gets copied. Lines with no
+  // arrow (plain prompts, standalone examples) copy in full as before.
   els.viewRoot.querySelectorAll('ul.plain li').forEach(li => {
     li.classList.add('copy-line');
-    addCopyBtn(li, li.textContent.trim());
+    const fullText = li.textContent.trim();
+    const arrowIndex = fullText.indexOf(' → ');
+    const copyText = arrowIndex !== -1 ? fullText.slice(0, arrowIndex).trim() : fullText;
+    addCopyBtn(li, copyText);
   });
 
   // msg-block content uses <br> for line breaks inside a multi-line
@@ -845,7 +877,7 @@ async function loadSections() {
     els.viewRoot.innerHTML = `<div class="note-block">Couldn't load content: ${escapeHtml(error.message)}. Check that sql/reference-sections.sql has been run in Supabase.</div>`;
     return;
   }
-  state.sections = new Map(data.map(row => [row.slug, row]));
+  state.sections = new Map(data.map(row => [row.slug, { ...row, content: sanitizeContent(row.content) }]));
   render();
 }
 

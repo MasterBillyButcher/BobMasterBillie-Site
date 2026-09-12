@@ -24,7 +24,7 @@ way an all-on-one-page layout would.
 Go to [supabase.com](https://supabase.com), create a new project.
 Note the database password it asks you to set.
 
-### 2. Run the three SQL files, in this order
+### 2. Run the four SQL files, in this order
 
 In Supabase's **SQL Editor → New query**, paste and run each as a
 separate query, in this order:
@@ -43,6 +43,11 @@ separate query, in this order:
    resets a real count.
 3. **`sql/backlog-items.sql`** — creates `backlog_items` (title, kind,
    platform, duration, language). Starts empty. Safe to re-run.
+4. **`sql/auth-attempts.sql`** — creates `auth_attempts`, which the
+   rate-limiting on every `/api` function depends on. Safe to re-run.
+   If this hasn't been run yet, the site still works — rate limiting
+   fails open rather than locking everyone out over a missing table —
+   but the password check has no brute-force protection until it has.
 
 ### 3. Get your keys
 
@@ -97,6 +102,39 @@ Click **🔒 Unlock editing**, enter the password. You get:
   chat-message template, for anything you'll paste into chat more
   than once
 
+## Security hardening
+
+Two things added after an outside review of the original design:
+
+- **Rate limiting on the password check.** A password that can be
+  guessed at unlimited speed isn't really protecting anything. Every
+  `/api` function now checks `auth_attempts` first — after 10 wrong
+  guesses from the same IP in 15 minutes, further attempts (even
+  correct ones) are rejected with a 429 until the window passes. See
+  `api/_lib/rate-limit.js`. If `sql/auth-attempts.sql` hasn't been run
+  yet, this fails open (allows the request through) rather than
+  locking everyone out over a missing table — worth running that file
+  before relying on the protection.
+- **Content sanitization on render.** Section content is raw HTML,
+  editable by anyone with the shared password. If that password were
+  ever guessed or leaked, the worst case shouldn't be "arbitrary
+  JavaScript now runs in every visitor's browser." Every bit of
+  content gets run through DOMPurify (loaded via CDN, same pattern as
+  supabase-js) against an allowlist matching exactly what this site's
+  content actually uses, before it's ever inserted into the page.
+  `<script>` tags, `onclick`/`onerror`/etc. attributes, `javascript:`
+  URLs, and `<iframe>`s are stripped regardless of what got saved to
+  the database. This was verified directly — actual XSS payloads
+  (script injection, event-handler injection, iframe injection) were
+  run through the real sanitizer and confirmed neutralized, and the
+  real seed content was confirmed to pass through byte-for-byte
+  unchanged.
+
+What this doesn't fix, because it can't be fixed from outside a real
+deployment: whether the live database writes, realtime sync, and
+atomic functions actually behave correctly under real concurrent use.
+See "Status" below.
+
 ## How the password protection actually works
 
 If the password check happened in the page's JavaScript, it wouldn't
@@ -127,18 +165,24 @@ client's claim that it already unlocked editing.
 
 ```
 index.html                    overview grid, single-section view, veto/backlog
-                               widgets, copy-line behavior, all client-side logic
+                               widgets, copy-line behavior, content sanitization,
+                               all client-side logic
 js/config.js                   Supabase URL + publishable/anon key
 sql/reference-sections.sql     reference_sections table + RLS + seed text content
 sql/veto-entries.sql            veto_entries table + atomic adjust function + seed
 sql/backlog-items.sql           backlog_items table + RLS, starts empty
+sql/auth-attempts.sql           auth_attempts table (rate-limit bookkeeping only)
 package.json, package-lock.json   exist only so Vercel installs
                                 @supabase/supabase-js for /api
 api/
-  verify-password.js            checks EDIT_PASSWORD, read-only
-  save-section.js                 writes to reference_sections
-  veto.js                          writes to veto_entries (add/remove/adjust)
-  backlog.js                       writes to backlog_items (add/remove)
+  _lib/rate-limit.js             shared rate-limit helper, used by all 4 below
+                                  (underscore prefix keeps Vercel from making
+                                  this its own route — it's a library, not an
+                                  endpoint)
+  verify-password.js            checks EDIT_PASSWORD, rate-limited, read-only
+  save-section.js                 writes to reference_sections, rate-limited
+  veto.js                          writes to veto_entries, rate-limited
+  backlog.js                       writes to backlog_items, rate-limited
 favicon.ico, apple-touch-icon.png
 ```
 
