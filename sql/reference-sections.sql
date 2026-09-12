@@ -55,12 +55,10 @@ INSERT INTO reference_sections (slug, title, content) VALUES
   <li>• New predictions every 15 minutes.</li>
   <li>• Don't miss your chance to vote and see what happens! 🎉</li>
 </ul>
-<p>🚨 No stream tonight, y'all.<br>💜 He'll see everyone tomorrow night!</p>
-<p>💬 Stream chat will still happen at the usual time.<br>⏳ Wait for it 💜</p>$$),
+<div class="msg-block">🚨 No stream tonight, y'all.<br>💜 He'll see everyone tomorrow night!</div>
+<div class="msg-block">💬 Stream chat will still happen at the usual time.<br>⏳ Wait for it 💜</div>$$),
 
-('veto', '🟣 Veto Power', $$<ul class="plain">
-  <li>⭐ mickey_17__ gets one chance to earn VIP back.</li>
-</ul>$$),
+('veto', '🟣 Veto Power', $$<div class="note-block">⭐ mickey_17__ gets one chance to earn VIP back. (Special case, not part of the veto count list below.)</div>$$),
 
 ('backlog', '🎬 Movie Backlog', $$<div class="note-block">This section's list is managed above with real Add/Remove — this space is for any extra notes about the backlog, if you want them.</div>$$),
 

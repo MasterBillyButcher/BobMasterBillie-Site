@@ -43,7 +43,6 @@
   .nav a:hover{background:var(--panel-2);color:var(--text);}
   .nav a.active{background:var(--panel-2);color:var(--text);}
   .nav a.active .num{color:var(--gold);}
-  .nav .overview-link{margin-bottom:4px;font-weight:600;}
 
   .sidebar-footer{margin-top:auto;padding-top:20px;border-top:1px solid var(--border);}
   .lock-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--panel-2);border:1px solid var(--border);color:var(--text-muted);font-weight:600;font-size:13px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:border-color .15s ease,color .15s ease;}
@@ -81,9 +80,18 @@
   h3{font-size:15px;font-weight:700;color:var(--purple-dim);text-transform:uppercase;letter-spacing:.04em;margin:32px 0 14px;}
   h3:first-of-type{margin-top:0;}
 
-  ul.plain{list-style:none;margin:0 0 4px;padding:0;}
-  ul.plain li{padding:9px 0;border-bottom:1px dashed var(--border);font-size:14.5px;}
-  ul.plain li:last-child{border-bottom:none;}
+  /* ---------- copy-line treatment (prompts / commands) ---------- */
+  ul.plain{list-style:none;margin:0 0 14px;padding:0;}
+  ul.plain li{padding:0;border:none;margin-bottom:6px;}
+  ul.plain li.copy-line{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px 13px;}
+  .line-copy-btn{flex-shrink:0;background:var(--panel-2);border:1px solid var(--border);color:var(--text-muted);width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:color .15s ease,border-color .15s ease;}
+  .line-copy-btn:hover{color:var(--gold);border-color:rgba(242,182,64,.5);}
+  .line-copy-btn.copied{color:var(--green);border-color:rgba(62,213,152,.5);}
+
+  .msg-block{position:relative;font-family:'JetBrains Mono',monospace;font-size:13.5px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px 46px 14px 16px;margin-bottom:10px;line-height:1.6;}
+  .msg-block .line-copy-btn{position:absolute;top:12px;right:12px;}
+
+  .cmd-copy-hint{color:var(--text-muted);font-size:12px;margin:-6px 0 18px;}
 
   .cmd-table{width:100%;border-collapse:collapse;margin-bottom:6px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
   .cmd-table th{text-align:left;font-size:11.5px;font-weight:600;color:var(--text-muted);padding:0 14px 8px;border-bottom:1px solid var(--border);}
@@ -120,7 +128,7 @@
 
   footer{border-top:1px solid var(--border);padding:32px 0 0;margin-top:60px;color:var(--text-muted);font-size:13px;}
 
-  /* ---------- edit mode ---------- */
+  /* ---------- edit mode (raw HTML sections) ---------- */
   .edit-form{background:var(--panel);border:1px solid var(--purple-dim);border-radius:var(--radius);padding:20px;margin-bottom:10px;}
   .edit-form label{display:block;font-size:12px;color:var(--text-muted);font-weight:600;margin:0 0 6px;}
   .edit-form input[type=text]{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:7px;font-size:15px;margin-bottom:16px;font-family:'Sora',sans-serif;}
@@ -137,28 +145,38 @@
   .add-section-btn{width:100%;margin-top:16px;background:transparent;border:1px dashed var(--border);color:var(--text-muted);font-weight:600;font-size:13px;padding:12px;border-radius:8px;cursor:pointer;}
   .add-section-btn:hover{border-color:var(--purple-dim);color:var(--text);}
 
-  /* ---------- live counters ---------- */
-  .counters-block{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
-  .counter-row{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;}
-  .counter-row .counter-label{font-size:14.5px;font-weight:600;}
-  .counter-row .counter-controls{display:flex;align-items:center;gap:12px;}
-  .counter-row .counter-value{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;color:var(--gold);min-width:2ch;text-align:center;}
-  .counter-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--panel-2);color:var(--text-muted);font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:color .15s ease,border-color .15s ease;}
-  .counter-btn:hover{color:var(--text);border-color:var(--purple-dim);}
-  .counter-btn:disabled{opacity:.35;cursor:default;}
-  .counter-btn.minus:hover{color:var(--red);border-color:rgba(232,96,122,.5);}
-  .counter-btn.plus:hover{color:var(--gold);border-color:rgba(242,182,64,.5);}
-  .counter-hint{color:var(--text-muted);font-size:12px;margin:-12px 0 20px;}
+  /* ---------- veto power ---------- */
+  .veto-summary{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;}
+  .veto-summary .vs-label{font-size:13.5px;color:var(--text-muted);font-weight:600;}
+  .veto-summary .vs-value{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--gold);}
+  .veto-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+  .veto-row{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;}
+  .veto-row .vr-name{font-size:14.5px;font-weight:600;}
+  .veto-row .vr-controls{display:flex;align-items:center;gap:10px;}
+  .veto-row .vr-value{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;color:var(--gold);min-width:2ch;text-align:center;}
+  .mini-btn{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--panel-2);color:var(--text-muted);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:color .15s ease,border-color .15s ease;}
+  .mini-btn:hover{color:var(--text);border-color:var(--purple-dim);}
+  .mini-btn.minus:hover{color:var(--red);border-color:rgba(232,96,122,.5);}
+  .mini-btn.plus:hover{color:var(--gold);border-color:rgba(242,182,64,.5);}
+  .add-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .add-row input,.add-row select{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:8px;font-size:14.5px;font-family:'Manrope',sans-serif;}
+  .add-row input:focus,.add-row select:focus{outline:none;border-color:var(--purple-dim);}
+  .add-row input[type=text]{flex:1;min-width:140px;}
+  .edit-hint{color:var(--text-muted);font-size:12px;margin:2px 0 20px;}
 
   /* ---------- movie backlog ---------- */
   .backlog-summary{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
   .backlog-count-badge{font-family:'JetBrains Mono',monospace;background:var(--panel-2);border:1px solid var(--border);color:var(--gold);font-size:13px;font-weight:700;padding:5px 12px;border-radius:99px;}
   .backlog-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
   .backlog-item{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;}
-  .backlog-item .bi-title{font-size:14.5px;font-weight:500;}
-  .backlog-add-row{display:flex;gap:10px;}
-  .backlog-add-row input{flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:8px;font-size:14.5px;font-family:'Manrope',sans-serif;}
-  .backlog-add-row input:focus{outline:none;border-color:var(--purple-dim);}
+  .backlog-item .bi-main{display:flex;flex-direction:column;gap:3px;}
+  .backlog-item .bi-title{font-size:14.5px;font-weight:600;}
+  .backlog-item .bi-meta{font-size:12.5px;color:var(--text-muted);display:flex;gap:8px;flex-wrap:wrap;}
+  .backlog-item .bi-meta .kind-pill{background:rgba(176,132,245,.14);color:var(--purple);padding:1px 8px;border-radius:99px;font-weight:600;}
+  .backlog-add-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+  .backlog-add-grid input,.backlog-add-grid select{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 13px;border-radius:8px;font-size:14px;font-family:'Manrope',sans-serif;width:100%;}
+  .backlog-add-grid input:focus,.backlog-add-grid select:focus{outline:none;border-color:var(--purple-dim);}
+  @media (max-width:700px){.backlog-add-grid{grid-template-columns:1fr 1fr;}}
 
   /* ---------- modal ---------- */
   .modal-scrim{position:fixed;inset:0;background:rgba(6,5,10,.7);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
@@ -191,7 +209,7 @@
 <div class="modal-scrim" id="pwModal">
   <div class="modal">
     <h3>Unlock editing</h3>
-    <p>Enter the shared password to edit sections, adjust counters, or manage the movie backlog.</p>
+    <p>Enter the shared password to edit sections, manage veto power, or manage the movie backlog.</p>
     <input type="password" id="pwInput" placeholder="Password" autocomplete="current-password">
     <div class="error" id="pwError"></div>
     <div class="row">
@@ -234,11 +252,11 @@ const SECTION_ORDER = ['prompts','veto','backlog','twitch','nightbot','custom','
 
 const state = {
   sections: new Map(),    // slug -> {slug, title, content, updated_at}
-  counters: new Map(),    // id -> {id, section_slug, label, value}
-  backlogItems: [],       // [{id, title, created_at}]
+  vetoEntries: [],         // [{id, username, veto_count}]
+  backlogItems: [],        // [{id, title, kind, platform, duration, language}]
   editing: false,
-  editingSlug: null,      // slug currently open in a raw-HTML edit form, or "__new__"
-  view: 'overview',       // 'overview' | a section slug
+  editingSlug: null,       // slug currently open in a raw-HTML edit form, or "__new__"
+  view: 'overview',        // 'overview' | a section slug
 };
 
 const els = {
@@ -283,8 +301,6 @@ function stripTagsPreview(html, maxLen) {
 }
 
 function iconForTitle(title) {
-  // pull a leading emoji off the title for the overview card icon,
-  // fall back to a generic mark if there isn't one
   const match = String(title).match(/^(\p{Extended_Pictographic}\uFE0F?)/u);
   return match ? match[1] : '📄';
 }
@@ -293,67 +309,96 @@ function titleWithoutIcon(title) {
   return String(title).replace(/^(\p{Extended_Pictographic}\uFE0F?)\s*/u, '');
 }
 
+function totalVetoPower() {
+  return state.vetoEntries.reduce((sum, e) => sum + (e.veto_count || 0), 0);
+}
+
 function goToView(view) {
   state.view = view;
   state.editingSlug = null;
   render();
-  window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+  window.scrollTo({ top: 0, behavior: 'auto' });
   closeMenu();
 }
 
-// ---------- counters ----------
-function countersForSlug(slug) {
-  return [...state.counters.values()]
-    .filter(c => c.section_slug === slug)
-    .sort((a, b) => a.id.localeCompare(b.id));
-}
-
-function counterRowHtml(c) {
-  const disabled = state.editing ? '' : 'disabled';
-  return `
-    <div class="counter-row">
-      <div class="counter-label">${escapeHtml(c.label)}</div>
-      <div class="counter-controls">
-        <button class="counter-btn minus" data-counter-adjust="${c.id}:-1" ${disabled}>−</button>
-        <div class="counter-value">${c.value}</div>
-        <button class="counter-btn plus" data-counter-adjust="${c.id}:1" ${disabled}>+</button>
+// ---------- veto power ---------- 
+function vetoBlockHtml() {
+  const rows = state.vetoEntries.map(e => `
+    <div class="veto-row">
+      <div class="vr-name">${escapeHtml(e.username)}</div>
+      <div class="vr-controls">
+        ${state.editing ? `<button class="mini-btn minus" data-veto-adjust="${e.id}:-1">−</button>` : ''}
+        <div class="vr-value">${e.veto_count}</div>
+        ${state.editing ? `<button class="mini-btn plus" data-veto-adjust="${e.id}:1">+</button>` : ''}
+        ${state.editing ? `<button class="icon-btn danger" data-veto-remove="${e.id}">Remove</button>` : ''}
       </div>
-    </div>`;
-}
+    </div>`).join('');
 
-function countersBlockHtml(slug) {
-  const counters = countersForSlug(slug);
-  if (!counters.length) return '';
-  const hint = state.editing ? '' : '<div class="counter-hint">Unlock editing to change these.</div>';
-  return `<div class="counters-block">${counters.map(counterRowHtml).join('')}</div>${hint}`;
-}
-
-// ---------- movie backlog (real items, not a section body) ----------
-function backlogBlockHtml() {
-  const items = state.backlogItems;
-  const list = items.length
-    ? `<div class="backlog-list">${items.map(item => `
-        <div class="backlog-item">
-          <div class="bi-title">🎬 ${escapeHtml(item.title)}</div>
-          ${state.editing ? `<button class="icon-btn danger" data-backlog-remove="${item.id}">Remove</button>` : ''}
-        </div>`).join('')}</div>`
-    : '<div class="empty-state">No movies queued yet.</div>';
+  const list = state.vetoEntries.length ? `<div class="veto-list">${rows}</div>` : '<div class="empty-state">No one on the veto list yet.</div>';
 
   const addRow = state.editing ? `
-    <div class="backlog-add-row">
-      <input type="text" id="backlogAddInput" placeholder="Add a movie or show title…" maxlength="200">
-      <button class="btn btn-primary" id="backlogAddBtn">Add</button>
-    </div>` : '';
+    <div class="add-row" style="margin-bottom:20px;">
+      <input type="text" id="vetoAddInput" placeholder="Add a viewer's username…" maxlength="60">
+      <button class="btn btn-primary" id="vetoAddBtn">Add</button>
+    </div>` : '<div class="edit-hint">Unlock editing to add, remove, or adjust.</div>';
 
   return `
-    <div class="backlog-summary">
-      <span class="backlog-count-badge">${items.length} queued</span>
+    <div class="veto-summary">
+      <span class="vs-label">Total veto power</span>
+      <span class="vs-value">${totalVetoPower()}</span>
     </div>
     ${list}
     ${addRow}`;
 }
 
-// ---------- overview ----------
+// ---------- movie backlog ---------- 
+function backlogBlockHtml() {
+  const items = state.backlogItems;
+  const list = items.length
+    ? `<div class="backlog-list">${items.map(item => {
+        const metaBits = [
+          item.platform ? escapeHtml(item.platform) : null,
+          item.duration ? escapeHtml(item.duration) : null,
+          item.language ? escapeHtml(item.language) : null,
+        ].filter(Boolean);
+        return `
+        <div class="backlog-item">
+          <div class="bi-main">
+            <div class="bi-title">${item.kind === 'show' ? '📺' : '🎬'} ${escapeHtml(item.title)}</div>
+            <div class="bi-meta">
+              <span class="kind-pill">${item.kind === 'show' ? 'Show' : 'Movie'}</span>
+              ${metaBits.map(b => `<span>${b}</span>`).join('<span>·</span>')}
+            </div>
+          </div>
+          ${state.editing ? `<button class="icon-btn danger" data-backlog-remove="${item.id}">Remove</button>` : ''}
+        </div>`;
+      }).join('')}</div>`
+    : '<div class="empty-state">Nothing left to watch — add something below.</div>';
+
+  const addRow = state.editing ? `
+    <div class="backlog-add-grid">
+      <input type="text" id="backlogTitle" placeholder="Title" maxlength="200">
+      <select id="backlogKind">
+        <option value="movie">Movie</option>
+        <option value="show">Show</option>
+      </select>
+      <input type="text" id="backlogPlatform" placeholder="Platform (Netflix…)" maxlength="60">
+      <input type="text" id="backlogDuration" placeholder="Duration (2h 10m)" maxlength="40">
+    </div>
+    <div class="add-row">
+      <input type="text" id="backlogLanguage" placeholder="Language" maxlength="40">
+      <button class="btn btn-primary" id="backlogAddBtn">Add to backlog</button>
+    </div>` : '<div class="edit-hint">Unlock editing to add or remove.</div>';
+
+  return `
+    <div class="backlog-summary">
+      <span class="backlog-count-badge">${items.length} left to watch</span>
+    </div>
+    ${list}
+    ${addRow}`;
+}
+
+// ---------- overview ---------- 
 function overviewHtml() {
   const slugs = orderedSlugs();
   const cards = slugs.map(slug => {
@@ -365,12 +410,15 @@ function overviewHtml() {
     if (slug === 'backlog') {
       previewText = state.backlogItems.length
         ? state.backlogItems.slice(0, 3).map(i => i.title).join(' · ')
-        : 'No movies queued yet';
-      meta = `${state.backlogItems.length} queued`;
+        : 'Nothing left to watch';
+      meta = `${state.backlogItems.length} left to watch`;
+    } else if (slug === 'veto') {
+      previewText = state.vetoEntries.length
+        ? state.vetoEntries.map(e => `${e.username}: ${e.veto_count}`).join(' · ')
+        : 'No one on the list yet';
+      meta = `Total: ${totalVetoPower()}`;
     } else {
       previewText = stripTagsPreview(s.content, 90) || 'Nothing here yet';
-      const counters = countersForSlug(slug);
-      if (counters.length) meta = counters.map(c => `${c.label}: ${c.value}`).join(' · ');
     }
     return `
       <button class="overview-card" data-goto="${slug}">
@@ -397,7 +445,7 @@ function overviewHtml() {
     ${state.editingSlug === '__new__' ? `<div style="margin-top:20px">${newSectionFormHtml()}</div>` : ''}`;
 }
 
-// ---------- single section view ----------
+// ---------- single section view ---------- 
 function sectionViewHtml(slug) {
   const s = state.sections.get(slug);
   if (!s) return `<div class="note-block">Section not found.</div><div class="breadcrumb" data-goto="overview">← All sections</div>`;
@@ -408,15 +456,20 @@ function sectionViewHtml(slug) {
 
   const actions = state.editing ? `
     <div class="section-actions">
-      <button class="icon-btn" data-edit="${slug}">Edit</button>
-      <button class="icon-btn danger" data-delete="${slug}">Delete</button>
+      <button class="icon-btn" data-edit="${slug}">Edit text</button>
+      <button class="icon-btn danger" data-delete="${slug}">Delete section</button>
     </div>` : '';
 
-  const counters = isEditingThis ? '' : countersBlockHtml(slug);
-  const backlog = (slug === 'backlog' && !isEditingThis) ? backlogBlockHtml() : '';
+  let specialBlock = '';
+  if (!isEditingThis && slug === 'veto') specialBlock = vetoBlockHtml();
+  if (!isEditingThis && slug === 'backlog') specialBlock = backlogBlockHtml();
+
+  const copyHint = (!isEditingThis && ['prompts','twitch','nightbot','custom'].includes(slug))
+    ? '<div class="cmd-copy-hint">Click the ⧉ icon on any line to copy it.</div>' : '';
+
   const body = isEditingThis
     ? editFormHtml(s)
-    : (slug === 'backlog' ? (s.content || '') : (s.content || '<div class="empty-state">Nothing here yet.</div>'));
+    : (s.content || (['veto','backlog'].includes(slug) ? '' : '<div class="empty-state">Nothing here yet.</div>'));
 
   return `
     <div class="breadcrumb" data-goto="overview">← All sections</div>
@@ -424,15 +477,14 @@ function sectionViewHtml(slug) {
       <h2><span class="idx">${idx}</span>${escapeHtml(s.title)}</h2>
       ${actions}
     </div>
-    ${counters}
-    ${backlog}
+    ${copyHint}
+    ${specialBlock}
     <div class="section-body">${body}</div>`;
 }
 
 function render() {
   const slugs = orderedSlugs();
 
-  // ---- sidebar nav ----
   els.navList.innerHTML = slugs.map((slug, i) => {
     const s = state.sections.get(slug);
     const num = String(i + 1).padStart(2, '0');
@@ -443,12 +495,12 @@ function render() {
   els.lockBtn.textContent = state.editing ? '🔓 Editing unlocked' : '🔒 Unlock editing';
   els.lockBtn.classList.toggle('unlocked', state.editing);
 
-  // ---- main view ----
   els.viewRoot.innerHTML = state.view === 'overview'
     ? overviewHtml()
     : sectionViewHtml(state.view);
 
   attachRuntimeHandlers();
+  enhanceCopyableContent();
 }
 
 function editFormHtml(s) {
@@ -458,7 +510,7 @@ function editFormHtml(s) {
       <input type="text" id="title-${s.slug}" value="${escapeHtml(s.title)}">
       <label for="content-${s.slug}">Content (raw HTML)</label>
       <textarea id="content-${s.slug}">${escapeHtml(s.content || '')}</textarea>
-      <div class="hint">This is raw HTML, same as the rest of the page uses — tables, lists, etc. all work.</div>
+      <div class="hint">This is raw HTML. Lines inside &lt;ul class="plain"&gt; automatically get a copy button.</div>
       <div class="row">
         <button class="btn btn-ghost" data-cancel-edit>Cancel</button>
         <button class="btn btn-primary" data-save="${s.slug}">Save</button>
@@ -504,24 +556,31 @@ function attachRuntimeHandlers() {
   const saveNewBtn = document.querySelector('[data-save-new]');
   if (saveNewBtn) saveNewBtn.addEventListener('click', saveNewSection);
 
-  els.viewRoot.querySelectorAll('[data-counter-adjust]').forEach(btn => {
+  // veto power
+  els.viewRoot.querySelectorAll('[data-veto-adjust]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const [id, delta] = btn.dataset.counterAdjust.split(':');
-      adjustCounter(id, parseInt(delta, 10));
+      const [id, delta] = btn.dataset.vetoAdjust.split(':');
+      adjustVeto(id, parseInt(delta, 10));
     });
   });
-
-  const backlogAddBtn = document.getElementById('backlogAddBtn');
-  if (backlogAddBtn) {
-    backlogAddBtn.addEventListener('click', addBacklogItem);
-    const input = document.getElementById('backlogAddInput');
-    if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') addBacklogItem(); });
+  els.viewRoot.querySelectorAll('[data-veto-remove]').forEach(btn => {
+    btn.addEventListener('click', () => removeVetoEntry(btn.dataset.vetoRemove));
+  });
+  const vetoAddBtn = document.getElementById('vetoAddBtn');
+  if (vetoAddBtn) {
+    vetoAddBtn.addEventListener('click', addVetoEntry);
+    const input = document.getElementById('vetoAddInput');
+    if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') addVetoEntry(); });
   }
+
+  // movie backlog
+  const backlogAddBtn = document.getElementById('backlogAddBtn');
+  if (backlogAddBtn) backlogAddBtn.addEventListener('click', addBacklogItem);
   els.viewRoot.querySelectorAll('[data-backlog-remove]').forEach(btn => {
     btn.addEventListener('click', () => removeBacklogItem(btn.dataset.backlogRemove));
   });
 
-  // copy-to-clipboard on outreach cards (works regardless of edit mode)
+  // copy-to-clipboard on outreach cards
   els.viewRoot.querySelectorAll('.card').forEach(card => {
     if (card.querySelector('.copy-btn') || !card.id) return;
     const btn = document.createElement('button');
@@ -534,6 +593,39 @@ function attachRuntimeHandlers() {
       });
     });
     card.appendChild(btn);
+  });
+}
+
+// makes every plain bullet line and every message-template block
+// copyable with one click — used across prompts / twitch / nightbot /
+// custom commands so the same command or message doesn't have to be
+// retyped every time it's sent in chat.
+function enhanceCopyableContent() {
+  function addCopyBtn(el, getText) {
+    if (el.querySelector('.line-copy-btn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'line-copy-btn';
+    btn.type = 'button';
+    btn.title = 'Copy';
+    btn.textContent = '⧉';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(getText()).then(() => {
+        btn.textContent = '✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = '⧉'; btn.classList.remove('copied'); }, 1200);
+      });
+    });
+    el.appendChild(btn);
+  }
+
+  els.viewRoot.querySelectorAll('ul.plain li').forEach(li => {
+    li.classList.add('copy-line');
+    addCopyBtn(li, () => li.textContent.replace('⧉', '').replace('✓', '').trim());
+  });
+
+  els.viewRoot.querySelectorAll('.msg-block').forEach(block => {
+    addCopyBtn(block, () => block.innerText.replace('⧉', '').replace('✓', '').trim());
   });
 }
 
@@ -608,46 +700,73 @@ async function deleteSection(slug) {
   }
 }
 
-async function adjustCounter(id, delta) {
-  // optimistic local update so the click feels instant; the realtime
-  // subscription reconciles with the real server value right after,
-  // correcting it if this optimistic guess was wrong (e.g. someone
-  // else clicked at the same moment, or GREATEST(0, ...) clamped it
-  // server-side).
-  const current = state.counters.get(id);
-  if (current) {
-    state.counters.set(id, { ...current, value: Math.max(0, current.value + delta) });
-    render();
-  }
+// ---------- veto power actions ---------- 
+async function addVetoEntry() {
+  const input = document.getElementById('vetoAddInput');
+  const username = input.value.trim();
+  if (!username) return;
 
-  const { data } = await apiCall('/api/adjust-counter', {
-    password: editPassword(), id, delta,
-  });
-
+  const { data } = await apiCall('/api/veto', { password: editPassword(), action: 'add', username });
   if (data.ok) {
-    state.counters.set(id, { ...state.counters.get(id), value: data.value });
+    state.vetoEntries.push({ id: data.id, username: data.username, veto_count: data.veto_count });
     render();
+    const fresh = document.getElementById('vetoAddInput');
+    if (fresh) fresh.focus();
+    showToast('Added');
   } else {
-    showToast(data.error || 'Counter update failed', true);
-    loadCounters(); // roll back to the real value
+    showToast(data.error || 'Could not add', true);
   }
 }
 
+async function removeVetoEntry(id) {
+  const entry = state.vetoEntries.find(e => e.id === id);
+  if (entry && !confirm(`Remove "${entry.username}" from the veto list?`)) return;
+
+  const { data } = await apiCall('/api/veto', { password: editPassword(), action: 'remove', id });
+  if (data.ok) {
+    state.vetoEntries = state.vetoEntries.filter(e => e.id !== id);
+    render();
+    showToast('Removed');
+  } else {
+    showToast(data.error || 'Could not remove', true);
+  }
+}
+
+async function adjustVeto(id, delta) {
+  const current = state.vetoEntries.find(e => e.id === id);
+  if (current) {
+    current.veto_count = Math.max(0, current.veto_count + delta);
+    render();
+  }
+
+  const { data } = await apiCall('/api/veto', { password: editPassword(), action: 'adjust', id, delta });
+  if (data.ok) {
+    const entry = state.vetoEntries.find(e => e.id === id);
+    if (entry) entry.veto_count = data.veto_count;
+    render();
+  } else {
+    showToast(data.error || 'Update failed', true);
+    loadVetoEntries();
+  }
+}
+
+// ---------- movie backlog actions ---------- 
 async function addBacklogItem() {
-  const input = document.getElementById('backlogAddInput');
-  const title = input.value.trim();
-  if (!title) return;
+  const title = document.getElementById('backlogTitle').value.trim();
+  if (!title) { showToast('Title is required', true); return; }
+  const kind = document.getElementById('backlogKind').value;
+  const platform = document.getElementById('backlogPlatform').value.trim();
+  const duration = document.getElementById('backlogDuration').value.trim();
+  const language = document.getElementById('backlogLanguage').value.trim();
 
   const { data } = await apiCall('/api/backlog', {
-    password: editPassword(), action: 'add', title,
+    password: editPassword(), action: 'add', title, kind, platform, duration, language,
   });
 
   if (data.ok) {
-    state.backlogItems.push({ id: data.id, title: data.title, created_at: new Date().toISOString() });
+    state.backlogItems.push({ id: data.id, title: data.title, kind: data.kind, platform: data.platform, duration: data.duration, language: data.language });
     render();
-    const freshInput = document.getElementById('backlogAddInput');
-    if (freshInput) freshInput.focus();
-    showToast('Added');
+    showToast('Added to backlog');
   } else {
     showToast(data.error || 'Could not add', true);
   }
@@ -657,10 +776,7 @@ async function removeBacklogItem(id) {
   const item = state.backlogItems.find(i => i.id === id);
   if (item && !confirm(`Remove "${item.title}" from the backlog?`)) return;
 
-  const { data } = await apiCall('/api/backlog', {
-    password: editPassword(), action: 'remove', id,
-  });
-
+  const { data } = await apiCall('/api/backlog', { password: editPassword(), action: 'remove', id });
   if (data.ok) {
     state.backlogItems = state.backlogItems.filter(i => i.id !== id);
     render();
@@ -670,7 +786,7 @@ async function removeBacklogItem(id) {
   }
 }
 
-// ---------- password unlock modal ----------
+// ---------- password unlock modal ---------- 
 els.lockBtn.addEventListener('click', () => {
   if (state.editing) {
     state.editing = false;
@@ -709,13 +825,13 @@ async function attemptUnlock() {
 els.pwSubmit.addEventListener('click', attemptUnlock);
 els.pwInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') attemptUnlock(); });
 
-// ---------- mobile nav ----------
+// ---------- mobile nav ---------- 
 function closeMenu(){ els.sidebar.classList.remove('open'); els.scrim.classList.remove('show'); }
 els.menuToggle.addEventListener('click', () => { els.sidebar.classList.toggle('open'); els.scrim.classList.toggle('show'); });
 els.scrim.addEventListener('click', closeMenu);
 els.brandHome.addEventListener('click', () => goToView('overview'));
 
-// ---------- data loading + realtime ----------
+// ---------- data loading + realtime ---------- 
 async function loadSections() {
   const { data, error } = await supabaseClient.from('reference_sections').select('*');
   if (error) {
@@ -726,13 +842,13 @@ async function loadSections() {
   render();
 }
 
-async function loadCounters() {
-  const { data, error } = await supabaseClient.from('reference_counters').select('*');
+async function loadVetoEntries() {
+  const { data, error } = await supabaseClient.from('veto_entries').select('*').order('created_at', { ascending: true });
   if (error) {
-    console.warn('Could not load reference_counters:', error.message, '— has sql/reference-counters.sql been run?');
+    console.warn('Could not load veto_entries:', error.message, '— has sql/veto-entries.sql been run?');
     return;
   }
-  state.counters = new Map(data.map(row => [row.id, row]));
+  state.vetoEntries = data;
   render();
 }
 
@@ -750,15 +866,13 @@ function subscribeRealtime() {
   supabaseClient
     .channel('reference_sections_changes')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'reference_sections' }, () => {
-      // Don't refetch while someone's mid-edit locally, or their draft
-      // gets discarded out from under them.
       if (!state.editingSlug) loadSections();
     })
     .subscribe();
 
   supabaseClient
-    .channel('reference_counters_changes')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'reference_counters' }, () => loadCounters())
+    .channel('veto_entries_changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'veto_entries' }, () => loadVetoEntries())
     .subscribe();
 
   supabaseClient
@@ -776,7 +890,7 @@ if (sessionStorage.getItem('bb_edit_pw')) {
 }
 
 loadSections();
-loadCounters();
+loadVetoEntries();
 loadBacklogItems();
 subscribeRealtime();
 </script>

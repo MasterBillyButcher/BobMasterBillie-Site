@@ -63,13 +63,23 @@ module.exports = async (req, res) => {
     return;
   }
 
+  const kind = body.kind === "show" ? "show" : "movie";
+  const platform = typeof body.platform === "string" ? body.platform.trim().slice(0, 60) : null;
+  const duration = typeof body.duration === "string" ? body.duration.trim().slice(0, 40) : null;
+  const language = typeof body.language === "string" ? body.language.trim().slice(0, 40) : null;
+
   const id = `backlog-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  const { error } = await supabase.from("backlog_items").insert({ id, title });
+  const { error } = await supabase.from("backlog_items").insert({
+    id, title, kind,
+    platform: platform || null,
+    duration: duration || null,
+    language: language || null,
+  });
 
   if (error) {
     res.status(500).json({ ok: false, error: error.message });
     return;
   }
 
-  res.status(200).json({ ok: true, id, title });
+  res.status(200).json({ ok: true, id, title, kind, platform, duration, language });
 };
