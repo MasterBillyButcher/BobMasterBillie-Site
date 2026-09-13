@@ -1,216 +1,183 @@
-# BobMasterBillie — Reference site
+# BobMasterBillie console (static HTML/CSS/JS + Supabase)
 
-A single-page reference site: command sheets with click-to-copy lines,
-live-stream prompts, a real add/remove veto-power tracker with a
-running total, a movie/show backlog with platform/duration/language,
-and outreach templates. Content lives in Supabase and updates live for
-anyone with the page open — no refresh needed. Editing is gated by one
-shared password (not individual logins).
+A plain HTML/CSS/JS version of the manager/mod console, no Next.js, no
+build step, no server of any kind. It talks to Supabase directly from
+the browser. Deploy it by uploading these files anywhere that serves
+static files (Netlify, GitHub Pages, Vercel's static hosting, or your
+own web host), there's nothing to build.
 
-Plain HTML/CSS/JS for the page itself, no framework, no build step.
-Four small Vercel Functions handle the password check and the actual
-database writes, since that can't happen safely in the browser (see
-"How the password protection actually works" below).
+## How this is secured, since there's no server
 
-The page shows a dashboard-style overview grid of all sections by
-default — click one to see just that section, full-width, with a
-"← All sections" link back. Nothing scrolls past everything else the
-way an all-on-one-page layout would.
+With no server, there's no server-side password check possible. This
+uses Supabase's own login system instead: you create a real user
+account in Supabase, sign in with that email and password, and Supabase
+issues a session token that the database checks on every request. The
+database itself (via Row Level Security policies) refuses to read or
+write anything unless that valid session is present. That's real
+security, a client-side-only password would not be, since anyone can
+read the JavaScript source and see it.
 
-## Setup, start to finish (from a brand new Supabase project)
+## Setup, start to finish
 
-### 1. Create a Supabase project
+### 1. Create the Supabase project and database
 
-Go to [supabase.com](https://supabase.com), create a new project.
-Note the database password it asks you to set.
+1. Go to [supabase.com](https://supabase.com), sign up or log in,
+   click **New Project**. Choose the free plan.
+2. Once it's ready, open the **SQL Editor**, paste in the entire
+   contents of `sql/schema.sql`, and click **Run**. This creates all
+   nine tables and one example client.
+3. Still in the SQL Editor, run a **new query** with the entire
+   contents of `sql/policies.sql`. This is what allows a logged-in
+   user to actually read and write the data, without it every request
+   gets silently blocked.
 
-### 2. Run the four SQL files, in this order
+### 2. Create your login
 
-In Supabase's **SQL Editor → New query**, paste and run each as a
-separate query, in this order:
+1. In Supabase, go to **Authentication > Users**, click **Add user**,
+   and create yourself an account with an email and password. (Turn
+   off "auto confirm user" only if you've set up email sending,
+   otherwise leave auto-confirm on so you can log in immediately.)
+2. This is the email and password you'll use on `login.html`. Add one
+   user per person who needs access, everyone with a Supabase Auth
+   account in this project can fully manage every client, there's no
+   per-user permission split in this version.
 
-1. **`sql/reference-sections.sql`** — creates `reference_sections`,
-   sets it so anyone can read it but nobody can write to it directly
-   from a browser, and seeds/syncs the 7 sections' text content. Safe
-   to re-run — uses `ON CONFLICT DO UPDATE`, so re-running always
-   brings content back to match this file. **This cuts both ways**: if
-   you've since edited a section through the page, re-running this
-   overwrites that edit back to the original wording.
-2. **`sql/veto-entries.sql`** — creates `veto_entries` (any number of
-   viewers, each with an addable/removable/adjustable veto count) and
-   the atomic `adjust_veto_entry()` function. Safe to re-run — uses
-   `ON CONFLICT DO NOTHING` for the two starter entries, so it never
-   resets a real count.
-3. **`sql/backlog-items.sql`** — creates `backlog_items` (title, kind,
-   platform, duration, language). Starts empty. Safe to re-run.
-4. **`sql/auth-attempts.sql`** — creates `auth_attempts`, which the
-   rate-limiting on every `/api` function depends on. Safe to re-run.
-   If this hasn't been run yet, the site still works — rate limiting
-   fails open rather than locking everyone out over a missing table —
-   but the password check has no brute-force protection until it has.
+### 3. Connect the site to your project
 
-### 3. Get your keys
+1. In Supabase, go to **Project Settings > API**.
+2. Open `js/config.js` in this project and fill in:
+   - `SUPABASE_URL`: your Project URL
+   - `SUPABASE_ANON_KEY`: the **anon / public** key (not service_role)
 
-Supabase → **Project Settings → API Keys**:
+   It's fine that this file is publicly readable once deployed, the
+   anon key is meant to be public, the RLS policies from step 1 are
+   what actually protects the data.
 
-- **Publishable key** (or legacy `anon` `public` key) — safe to be
-  public, goes in `js/config.js`.
-- **Secret key** (or legacy `service_role` key) — privileged, bypasses
-  every access rule. Goes **only** in a Vercel environment variable,
-  never in any file in this repo.
+### 4. Deploy
 
-### 4. Fill in `js/config.js`
+Any static host works. Two easy options:
 
-```js
-const SUPABASE_URL = "https://your-project.supabase.co";
-const SUPABASE_ANON_KEY = "your-publishable-or-anon-key";
-```
+- **Netlify**: drag this whole folder onto
+  [app.netlify.com/drop](https://app.netlify.com/drop).
+- **Vercel**: run `vercel deploy` from inside this folder (no
+  `vercel.json` needed, it auto-detects a static site).
 
-### 5. Push to GitHub
+Or just open `index.html` directly in a browser for local testing,
+though some browsers restrict certain requests from `file://` URLs, a
+quick `python3 -m http.server` in this folder and visiting
+`http://localhost:8000` is more reliable for local testing.
 
-```bash
-git init
-git add .
-git commit -m "initial commit"
-git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO.git
-git push -u origin main
-```
+## What's in it
 
-### 6. Deploy on Vercel
+- `login.html` / `js/auth.js`: Supabase Auth sign-in
+- `index.html` / `js/app.js`: the dashboard itself, nine tabs (client
+  switcher at the top, everything below it scoped to whichever client
+  is selected):
+  - **Overview**: live status, hype/treasure train checkpoints, a
+    glance at open veto rights, tickets, and pending invoices
+  - **Moderation log**: manually logged bans, timeouts, warns, kicks
+  - **Discord**: role reference and a support ticket queue
+  - **Veto & VIP**: add viewers, track veto rights, VIP watch
+  - **Backlog**: the movie/segment queue
+  - **Schedule**: who's covering chat, when
+  - **Billing**: hours and rate per period, pending or paid
+  - **Clients**: add, view, remove clients on your roster
+  - **Reference**: a static command cheat sheet
+- `sql/schema.sql`: the database structure
+- `sql/policies.sql`: the access rules that make it safe to use the
+  anon key from the browser
 
-1. **Add New → Project** → pick your repo.
-2. Framework preset: **Other**. Leave build/output/install commands
-   empty.
-3. Add three **Environment Variables** before deploying:
-   - `EDIT_PASSWORD` — whatever password gates editing
-   - `SUPABASE_URL` — same as in `js/config.js`
-   - `SUPABASE_SERVICE_ROLE_KEY` — the **secret** key from step 3
-4. Deploy.
+Nothing here connects to Twitch or Discord's own APIs automatically
+unless you complete the "Webhook integrations" section below, everything
+is entered by hand otherwise. There's no image upload feature anywhere
+in this build.
 
-### 7. Try it
+## Webhook integrations (optional)
 
-Click **🔒 Unlock editing**, enter the password. You get:
+Everything above works with zero setup beyond steps 1 through 4. These
+three additions bring back real Twitch and Discord auto-logging,
+without needing any server beyond Supabase itself. They run as
+**Supabase Edge Functions** (small serverless functions Supabase hosts
+for you) instead of a Next.js/Vercel backend.
 
-- Edit text / Delete on every section, **+ Add a section** on the
-  overview grid
-- Veto Power: add a viewer, **−/+** their count, remove them, a
-  running **Total veto power** line that updates as you go
-- Movie Backlog: an add form (title, movie/show, platform, duration,
-  language), remove per item, a live "X left to watch" count
-- A small **⧉** copy icon on every command/prompt line and every
-  chat-message template, for anything you'll paste into chat more
-  than once
+### Deploy the functions
 
-## Security hardening
+1. Install the [Supabase CLI](https://supabase.com/docs/guides/cli).
+2. From this project's folder: `supabase login`, then
+   `supabase link --project-ref YOUR-PROJECT-REF` (find your ref in
+   the Supabase dashboard URL).
+3. Deploy each function:
+   ```bash
+   supabase functions deploy twitch-webhook --no-verify-jwt
+   supabase functions deploy twitch-callback --no-verify-jwt
+   supabase functions deploy twitch-connect
+   supabase functions deploy discord-poll
+   supabase functions deploy discord-notify
+   ```
+4. Set the secrets these functions need:
+   ```bash
+   supabase secrets set TWITCH_CLIENT_ID=xxx TWITCH_CLIENT_SECRET=xxx \
+     TWITCH_WEBHOOK_SECRET=xxx TWITCH_EVENTSUB_SCOPES=channel:moderate \
+     DISCORD_BOT_TOKEN=xxx DASHBOARD_URL=https://your-deployed-site.example/index.html
+   ```
+   `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are provided to every
+   Edge Function automatically, don't set those yourself.
+5. Run `sql/integrations.sql` in the SQL Editor, it adds the columns
+   these functions read and write.
 
-Two things added after an outside review of the original design:
+### 1. Twitch: bans and unbans auto-log
 
-- **Rate limiting on the password check.** A password that can be
-  guessed at unlimited speed isn't really protecting anything. Every
-  `/api` function now checks `auth_attempts` first — after 10 wrong
-  guesses from the same IP in 15 minutes, further attempts (even
-  correct ones) are rejected with a 429 until the window passes. See
-  `api/_lib/rate-limit.js`. If `sql/auth-attempts.sql` hasn't been run
-  yet, this fails open (allows the request through) rather than
-  locking everyone out over a missing table — worth running that file
-  before relying on the protection.
-- **Content sanitization on render.** Section content is raw HTML,
-  editable by anyone with the shared password. If that password were
-  ever guessed or leaked, the worst case shouldn't be "arbitrary
-  JavaScript now runs in every visitor's browser." Every bit of
-  content gets run through DOMPurify (loaded via CDN, same pattern as
-  supabase-js) against an allowlist matching exactly what this site's
-  content actually uses, before it's ever inserted into the page.
-  `<script>` tags, `onclick`/`onerror`/etc. attributes, `javascript:`
-  URLs, and `<iframe>`s are stripped regardless of what got saved to
-  the database. This was verified directly — actual XSS payloads
-  (script injection, event-handler injection, iframe injection) were
-  run through the real sanitizer and confirmed neutralized, and the
-  real seed content was confirmed to pass through byte-for-byte
-  unchanged.
+1. Create a Twitch app at
+   [dev.twitch.tv/console/apps](https://dev.twitch.tv/console/apps).
+   Set its OAuth redirect URL to
+   `https://YOUR-PROJECT-REF.supabase.co/functions/v1/twitch-callback`.
+2. In the dashboard's Clients tab, make sure the client has their
+   Twitch channel login name filled in, then click **Connect Twitch
+   webhooks** on that client's card.
 
-What this doesn't fix, because it can't be fixed from outside a real
-deployment: whether the live database writes, realtime sync, and
-atomic functions actually behave correctly under real concurrent use.
-See "Status" below.
+Twitch's exact scope requirement for this (currently `channel:moderate`
+in the secrets above) has changed before. If the connect step
+completes but nothing gets logged, check the current requirement at
+[dev.twitch.tv/docs/eventsub/eventsub-subscription-types](https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types).
 
-## How the password protection actually works
+### 2. Discord: alerts posted into a channel
 
-If the password check happened in the page's JavaScript, it wouldn't
-protect anything — dev tools would show it, or someone could skip the
-check and write to the database directly with the public key. A
-password only means something if it's checked somewhere a visitor
-can't see.
+In the client's Discord server: **Server Settings, Integrations,
+Webhooks, New Webhook**, copy the URL, paste it into the "Discord
+incoming webhook URL" field when adding that client. The dashboard
+then posts into that channel when the client goes live, and when a
+new ticket opens.
 
-The four files in `api/` run on Vercel's servers, not the browser.
-`EDIT_PASSWORD` and `SUPABASE_SERVICE_ROLE_KEY` are only ever read
-inside those files — the browser never receives them.
+### 3. Discord: bans, kicks and timeouts auto-log (polling)
 
-- **`verify-password.js`** — checks the password for "Unlock editing."
-  Read-only.
-- **`save-section.js`** — the only thing that writes to
-  `reference_sections`.
-- **`veto.js`** — the only thing that writes to `veto_entries`.
-  Add/remove are plain inserts/deletes; the +/- adjustment goes
-  through `adjust_veto_entry()`, one atomic SQL statement, so two
-  people clicking the same person's counter at nearly the same moment
-  can't race each other into a wrong number.
-- **`backlog.js`** — the only thing that writes to `backlog_items`.
+Discord has no true webhook for this, so it's polled instead.
 
-All four re-check the password independently — none of them trust a
-client's claim that it already unlocked editing.
+1. Create a bot at
+   [discord.com/developers/applications](https://discord.com/developers/applications),
+   set `DISCORD_BOT_TOKEN` (step above).
+2. Invite the bot to each client's server with **View Audit Log**
+   permission.
+3. Get the server ID (Discord Developer Mode on, right-click the
+   server icon, Copy Server ID) and paste it into "Discord server ID"
+   when adding that client.
+4. Run `sql/schedule-discord-poll.sql` in the SQL Editor, filling in
+   your project URL and anon key where marked. This uses `pg_cron`
+   (built into every Supabase project, including the free tier) to
+   call `discord-poll` every 5 minutes on its own, no external
+   scheduler needed.
 
-## File map
+## Known limitations of the static approach
 
-```
-index.html                    overview grid, single-section view, veto/backlog
-                               widgets, copy-line behavior, content sanitization,
-                               all client-side logic
-js/config.js                   Supabase URL + publishable/anon key
-sql/reference-sections.sql     reference_sections table + RLS + seed text content
-sql/veto-entries.sql            veto_entries table + atomic adjust function + seed
-sql/backlog-items.sql           backlog_items table + RLS, starts empty
-sql/auth-attempts.sql           auth_attempts table (rate-limit bookkeeping only)
-package.json, package-lock.json   exist only so Vercel installs
-                                @supabase/supabase-js for /api
-api/
-  _lib/rate-limit.js             shared rate-limit helper, used by all 4 below
-                                  (underscore prefix keeps Vercel from making
-                                  this its own route — it's a library, not an
-                                  endpoint)
-  verify-password.js            checks EDIT_PASSWORD, rate-limited, read-only
-  save-section.js                 writes to reference_sections, rate-limited
-  veto.js                          writes to veto_entries, rate-limited
-  backlog.js                       writes to backlog_items, rate-limited
-favicon.ico, apple-touch-icon.png
-```
-
-## Known limitations
-
-- **One shared password, not individual accounts** — no way to tell
-  who made a given change, no per-person access levels.
-- **Raw HTML editing** for section text (the free-text sections, not
-  veto power or the movie backlog, which have real forms).
-- **No edit history** — saves overwrite, no version history or undo.
-- **No offline handling** — a dropped connection mid-save shows a
-  toast error, not an automatic retry.
-
-## Status — what's actually been verified
-
-**Unit-tested, not deployed:** all four `/api` functions were tested
-directly with mocked requests — wrong password, missing env vars,
-invalid input (bad slugs/ids, non-integer or oversized deltas, empty
-or oversized titles/usernames), unknown actions, wrong HTTP method —
-all correctly rejected with the right status code.
-`@supabase/supabase-js` was confirmed to install and resolve
-correctly. **Not tested:** the actual database reads/writes once a
-request passes every check, or the whole thing end-to-end on a real
-Vercel deployment (env vars actually set, realtime updates actually
-firing across two open tabs, the atomic functions actually preventing
-a race under real concurrent clicks). This sandbox has no network path
-to Supabase or Vercel to verify further than that.
-
-If something breaks after deployment, check the Vercel Function's
-logs first (Vercel dashboard → your project → Deployments → the
-function) — the actual Supabase error will show up there.
+- **No per-user permissions.** Every account you create in step 2 can
+  see and edit every client. If you need different mods to have
+  different access levels, that needs proper Supabase Auth roles and
+  more detailed RLS policies, a real next step, not something this
+  version does.
+- **Two-step toggles, not atomic.** Things like the live/not-live
+  switch read the current value then write the new one, in two
+  separate requests. Fine for one person or a small team clicking
+  around, not built for many people hammering the same button at the
+  exact same moment.
+- **No offline handling.** If the network drops mid-action, you'll see
+  a Supabase error in the browser console rather than a friendly
+  retry. Worth hardening if this becomes daily-critical.
