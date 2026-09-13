@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Dashboard — BobMasterBillie</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <p class="page-eyebrow">Control room</p>
+      <h1>Dashboard</h1>
+      <p class="text-dim">
+        Everything here is server-checked on every request — not hidden
+        with client-side JS. Wire up real data in place of these panels.
+      </p>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 3h11v9l-3.5 3.5H10l-2 2v-2H5V3Z" stroke-linejoin="round"/></svg>
+            Twitch
+          </div>
+          <div class="stat-status"><span class="dot"></span> Not connected</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="7" width="12" height="9" rx="2"/><path d="M10 7V4" stroke-linecap="round"/></svg>
+            Nightbot
+          </div>
+          <div class="stat-status"><span class="dot"></span> Not connected</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 16.5V3M3 16.5h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Predictions
+          </div>
+          <div class="stat-value">0 active</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h12M4 10h12M4 14h8" stroke-linecap="round"/></svg>
+            Backlog
+          </div>
+          <div class="stat-value">0 items</div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="/js/csrf.js"></script>
+  <script src="/js/nav.js"></script>
+</body>
+</html>
