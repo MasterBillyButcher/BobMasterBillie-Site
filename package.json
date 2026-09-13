@@ -1,8 +1,0 @@
-{
-  "name": "bobmasterbillie-reference",
-  "private": true,
-  "description": "Static reference page (no build step, no framework) + four Vercel Functions in /api that handle the password-gated writes to Supabase. This file exists only so Vercel installs @supabase/supabase-js for those functions — index.html itself needs no build step and no dependencies (DOMPurify and supabase-js load via CDN in the browser).",
-  "dependencies": {
-    "@supabase/supabase-js": "^2"
-  }
-}
