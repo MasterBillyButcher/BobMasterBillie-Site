@@ -13,10 +13,24 @@
     <main class="main-content">
       <p class="page-eyebrow">Control room</p>
       <h1>Nightbot</h1>
-      <p class="text-dim">
-        This section is protected by the same server-side check as the
-        rest of the dashboard. Build out its content here.
-      </p>
+      <section class="settings-section">
+        <h2>Not connected yet</h2>
+        <p>
+          Same story as Twitch — Nightbot has its own API and OAuth flow
+          via the
+          <a href="https://api-docs.nightbot.tv/" target="_blank" rel="noopener noreferrer">Nightbot API docs</a>,
+          which needs real credentials to work.
+        </p>
+        <p>In the meantime, Custom Commands (in the sidebar) works as a
+          plain reference list — jot down commands and responses there,
+          then paste them into Nightbot's dashboard by hand.</p>
+        <p>To wire up a real connection later:</p>
+        <ol>
+          <li>Register an app with Nightbot to get a Client ID and Client Secret</li>
+          <li>Add an OAuth login route and a server-side token exchange</li>
+          <li>Call the Nightbot API from the server to read/sync commands directly</li>
+        </ol>
+      </section>
     </main>
   </div>
   <script src="/js/csrf.js"></script>

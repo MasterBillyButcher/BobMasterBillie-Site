@@ -13,10 +13,23 @@
     <main class="main-content">
       <p class="page-eyebrow">Control room</p>
       <h1>Twitch</h1>
-      <p class="text-dim">
-        This section is protected by the same server-side check as the
-        rest of the dashboard. Build out its content here.
-      </p>
+      <section class="settings-section">
+        <h2>Not connected yet</h2>
+        <p>
+          This needs a real connection to the Twitch API, which requires
+          registering an app in the
+          <a href="https://dev.twitch.tv/console/apps" target="_blank" rel="noopener noreferrer">Twitch Developer Console</a>
+          and completing an OAuth login — that can't be faked with
+          placeholder data.
+        </p>
+        <p>To wire this up for real:</p>
+        <ol>
+          <li>Register an app at dev.twitch.tv to get a Client ID and Client Secret</li>
+          <li>Add those as env vars (e.g. <code>TWITCH_CLIENT_ID</code>, <code>TWITCH_CLIENT_SECRET</code>)</li>
+          <li>Add an OAuth login route and a server-side token exchange</li>
+          <li>Use the Twitch API (stream status, channel info, etc.) from the server, same pattern as the rest of this app — never expose tokens to the browser</li>
+        </ol>
+      </section>
     </main>
   </div>
   <script src="/js/csrf.js"></script>

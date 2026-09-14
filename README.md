@@ -35,11 +35,31 @@ Stream Notes, Backlog, Veto Power, Quick Links, CV, Settings).
   against an in-memory auth store (`AUTH_TEST_MODE=1`) — no real
   Supabase project needed to run them.
 
+## Content sections
+
+Commands, Predictions, Channels, Stream Notes, Backlog, Veto Power, Quick
+Links, and CV are all real, working add/edit/delete lists — backed by
+one generic `dashboard_items` table in Supabase (same lockdown pattern as
+`dashboard_auth`: RLS on, no anon/authenticated policies, server-side
+only). Each page just configures labels via `data-*` attributes on a
+mount `<div>`; the actual list/add/edit/delete logic lives once in
+`public/js/items.js` and talks to `/api/items`.
+
+**Twitch and Nightbot are intentionally left as "not connected" pages.**
+Both need real OAuth credentials from their own developer consoles
+(Twitch Developer Console, Nightbot API) to do anything real — there's
+no way to build working integrations without those, so rather than fake
+it with placeholder data, each page explains exactly what's needed to
+wire up a real connection later.
+
+The Dashboard home page shows live counts (Predictions, Backlog,
+Commands, Quick Links) pulled from the same `/api/items` endpoint.
+
 ## Setup — no local commands needed
 
 You can set the dashboard password entirely through the deployed site.
 
-1. **Create the Supabase table.** Run this in Supabase → SQL Editor:
+1. **Create the Supabase tables.** Run this in Supabase → SQL Editor:
    ```sql
    create table if not exists public.dashboard_auth (
      id integer primary key default 1,
@@ -48,11 +68,28 @@ You can set the dashboard password entirely through the deployed site.
      updated_at timestamptz not null default now(),
      constraint dashboard_auth_single_row check (id = 1)
    );
-
    alter table public.dashboard_auth enable row level security;
-   -- No CREATE POLICY statements on purpose: default-deny.
+
+   create table if not exists public.dashboard_items (
+     id uuid primary key default gen_random_uuid(),
+     section text not null,
+     title text not null,
+     body text,
+     url text,
+     position integer not null default 0,
+     created_at timestamptz not null default now(),
+     updated_at timestamptz not null default now()
+   );
+   create index if not exists dashboard_items_section_idx
+     on public.dashboard_items (section, position, created_at);
+   alter table public.dashboard_items enable row level security;
+
+   -- No CREATE POLICY statements on either table: default-deny.
    ```
-   (Same content as `supabase/schema.sql` in this repo.)
+   (Same content as `supabase/schema.sql` in this repo. If you already
+   have `dashboard_auth` set up, running this again is safe — `create
+   table if not exists` skips anything already there, so it just adds
+   `dashboard_items`.)
 2. **Set these environment variables in Vercel:**
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_ROLE_KEY`

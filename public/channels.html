@@ -13,13 +13,22 @@
     <main class="main-content">
       <p class="page-eyebrow">Control room</p>
       <h1>Channels</h1>
-      <p class="text-dim">
-        This section is protected by the same server-side check as the
-        rest of the dashboard. Build out its content here.
-      </p>
+      <p class="text-dim">Other channels you raid, host, or want to keep an eye on.</p>
+      <div
+        id="item-mount"
+        data-item-list
+        data-section="channels"
+        data-title-label="Channel name"
+        data-body-label="Notes"
+        data-show-url="true"
+        data-url-label="Channel URL"
+        data-empty-text="No channels added yet."
+        data-add-button-text="Add channel"
+      ></div>
     </main>
   </div>
   <script src="/js/csrf.js"></script>
   <script src="/js/nav.js"></script>
+  <script src="/js/items.js"></script>
 </body>
 </html>

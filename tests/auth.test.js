@@ -218,3 +218,99 @@ test('/api/setup with the correct secret sets a working password, even with no p
     }),
   });
 });
+
+test('/api/items rejects an unknown section', async () => {
+  const jar = new CookieJar();
+  const csrf = await primeCsrf(jar);
+  const loginRes = await fetch(`${baseUrl}/api/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Cookie: jar.header(), 'X-CSRF-Token': csrf },
+    body: JSON.stringify({ password: TEST_PASSWORD }),
+  });
+  jar.absorb(loginRes);
+
+  const res = await fetch(`${baseUrl}/api/items?section=not-a-real-section`, {
+    headers: { Cookie: jar.header() },
+  });
+  assert.equal(res.status, 400);
+});
+
+test('/api/items requires auth for read and write', async () => {
+  const getRes = await fetch(`${baseUrl}/api/items?section=backlog`);
+  assert.equal(getRes.status, 401);
+
+  const postRes = await fetch(`${baseUrl}/api/items`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ section: 'backlog', title: 'x' }),
+  });
+  assert.equal(postRes.status, 401);
+});
+
+test('/api/items: full create -> list -> update -> delete cycle', async () => {
+  const jar = new CookieJar();
+  const csrf = await primeCsrf(jar);
+  const loginRes = await fetch(`${baseUrl}/api/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Cookie: jar.header(), 'X-CSRF-Token': csrf },
+    body: JSON.stringify({ password: TEST_PASSWORD }),
+  });
+  jar.absorb(loginRes);
+
+  // Create requires a title.
+  const badCreate = await fetch(`${baseUrl}/api/items`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Cookie: jar.header(), 'X-CSRF-Token': csrf },
+    body: JSON.stringify({ section: 'backlog', title: '  ' }),
+  });
+  assert.equal(badCreate.status, 400);
+
+  // Create a real item.
+  const createRes = await fetch(`${baseUrl}/api/items`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Cookie: jar.header(), 'X-CSRF-Token': csrf },
+    body: JSON.stringify({ section: 'backlog', title: 'Play Hollow Knight', body: 'Blind playthrough' }),
+  });
+  assert.equal(createRes.status, 201);
+  const { item } = await createRes.json();
+  assert.equal(item.title, 'Play Hollow Knight');
+  assert.equal(item.section, 'backlog');
+
+  // It shows up in the list.
+  const listRes = await fetch(`${baseUrl}/api/items?section=backlog`, {
+    headers: { Cookie: jar.header() },
+  });
+  const { items } = await listRes.json();
+  assert.ok(items.some((i) => i.id === item.id));
+
+  // Update it.
+  const updateRes = await fetch(`${baseUrl}/api/items/${item.id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Cookie: jar.header(), 'X-CSRF-Token': csrf },
+    body: JSON.stringify({ title: 'Play Hollow Knight (100%)' }),
+  });
+  assert.equal(updateRes.status, 200);
+  const { item: updated } = await updateRes.json();
+  assert.equal(updated.title, 'Play Hollow Knight (100%)');
+
+  // A bad URL is rejected.
+  const badUrlRes = await fetch(`${baseUrl}/api/items`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Cookie: jar.header(), 'X-CSRF-Token': csrf },
+    body: JSON.stringify({ section: 'links', title: 'Bad link', url: 'not-a-url' }),
+  });
+  assert.equal(badUrlRes.status, 400);
+
+  // Delete it.
+  const deleteRes = await fetch(`${baseUrl}/api/items/${item.id}`, {
+    method: 'DELETE',
+    headers: { Cookie: jar.header(), 'X-CSRF-Token': csrf },
+  });
+  assert.equal(deleteRes.status, 200);
+
+  const listAfter = await fetch(`${baseUrl}/api/items?section=backlog`, {
+    headers: { Cookie: jar.header() },
+  });
+  const { items: itemsAfter } = await listAfter.json();
+  assert.ok(!itemsAfter.some((i) => i.id === item.id));
+});

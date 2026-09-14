@@ -20,6 +20,10 @@ const {
   getDashboardAuthRow,
   updateDashboardPassword,
   upsertDashboardPassword,
+  listItems,
+  createItem,
+  updateItem,
+  deleteItem,
 } = require('./lib/supabase-admin');
 const { ensureCsrfCookie, verifyCsrf } = require('./lib/csrf');
 
@@ -290,6 +294,130 @@ app.post('/api/setup', setupLimiter, verifyCsrf, async (req, res) => {
   }
 
   res.json({ ok: true });
+});
+
+// ---------------------------------------------------------------------------
+// Items API — generic storage for Commands, Predictions, Channels, Stream
+// Notes, Backlog, Veto Power, Quick Links, and CV. Every route requires
+// an authenticated session; mutating routes also require CSRF.
+// ---------------------------------------------------------------------------
+const VALID_SECTIONS = new Set([
+  'commands',
+  'predictions',
+  'channels',
+  'notes',
+  'backlog',
+  'veto',
+  'links',
+  'cv',
+]);
+const MAX_TITLE_LENGTH = 200;
+const MAX_BODY_LENGTH = 5000;
+const MAX_URL_LENGTH = 2000;
+
+function validateItemFields(body, { requireTitle }) {
+  const { title, body: itemBody, url } = body || {};
+
+  if (requireTitle) {
+    if (typeof title !== 'string' || title.trim().length === 0) {
+      return 'Title is required.';
+    }
+  }
+  if (title !== undefined && (typeof title !== 'string' || title.length > MAX_TITLE_LENGTH)) {
+    return `Title must be ${MAX_TITLE_LENGTH} characters or fewer.`;
+  }
+  if (itemBody !== undefined && itemBody !== null) {
+    if (typeof itemBody !== 'string' || itemBody.length > MAX_BODY_LENGTH) {
+      return `Body must be ${MAX_BODY_LENGTH} characters or fewer.`;
+    }
+  }
+  if (url !== undefined && url !== null && url !== '') {
+    if (typeof url !== 'string' || url.length > MAX_URL_LENGTH) {
+      return `URL must be ${MAX_URL_LENGTH} characters or fewer.`;
+    }
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        return 'URL must start with http:// or https://.';
+      }
+    } catch {
+      return 'URL is not valid.';
+    }
+  }
+  return null;
+}
+
+app.get('/api/items', requireAuthApi, async (req, res) => {
+  const { section } = req.query;
+  if (typeof section !== 'string' || !VALID_SECTIONS.has(section)) {
+    return res.status(400).json({ error: 'Unknown section.' });
+  }
+
+  try {
+    const items = await listItems(section);
+    res.json({ items });
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'Failed to load items.' });
+  }
+});
+
+app.post('/api/items', requireAuthApi, verifyCsrf, async (req, res) => {
+  const { section } = req.body || {};
+  if (typeof section !== 'string' || !VALID_SECTIONS.has(section)) {
+    return res.status(400).json({ error: 'Unknown section.' });
+  }
+
+  const validationError = validateItemFields(req.body, { requireTitle: true });
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
+  try {
+    const { title, body, url } = req.body;
+    const item = await createItem({ section, title: title.trim(), body, url: url || null });
+    res.status(201).json({ item });
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'Failed to create item.' });
+  }
+});
+
+app.put('/api/items/:id', requireAuthApi, verifyCsrf, async (req, res) => {
+  const { id } = req.params;
+  if (typeof id !== 'string' || id.length === 0) {
+    return res.status(400).json({ error: 'Invalid item id.' });
+  }
+
+  const validationError = validateItemFields(req.body, { requireTitle: false });
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
+  try {
+    const { title, body, url } = req.body || {};
+    const patch = {};
+    if (title !== undefined) patch.title = title.trim();
+    if (body !== undefined) patch.body = body;
+    if (url !== undefined) patch.url = url || null;
+
+    const item = await updateItem(id, patch);
+    res.json({ item });
+  } catch (err) {
+    res.status(404).json({ error: err.message || 'Item not found.' });
+  }
+});
+
+app.delete('/api/items/:id', requireAuthApi, verifyCsrf, async (req, res) => {
+  const { id } = req.params;
+  if (typeof id !== 'string' || id.length === 0) {
+    return res.status(400).json({ error: 'Invalid item id.' });
+  }
+
+  try {
+    await deleteItem(id);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'Failed to delete item.' });
+  }
 });
 
 // 404 fallback

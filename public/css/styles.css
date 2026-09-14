@@ -138,7 +138,8 @@ svg {
   margin-bottom: 8px;
 }
 
-.field input {
+.field input,
+.field textarea {
   width: 100%;
   padding: 11px 13px;
   background: #0d0e11;
@@ -148,13 +149,16 @@ svg {
   font-size: 1rem;
   font-family: var(--sans);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  resize: vertical;
 }
 
-.field input::placeholder {
+.field input::placeholder,
+.field textarea::placeholder {
   color: var(--text-faint);
 }
 
-.field input:focus {
+.field input:focus,
+.field textarea:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-soft);
@@ -458,8 +462,91 @@ button.secondary:hover:not(:disabled) {
 }
 
 /* ---------------------------------------------------------------------
-   Mobile
+   Item lists (Commands, Predictions, Channels, Notes, Backlog, Veto,
+   Links, CV) — shared by public/js/items.js
    ------------------------------------------------------------------- */
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 24px 0;
+  max-width: 640px;
+}
+
+.item-empty {
+  padding: 20px 0;
+}
+
+.item-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.item-card-editing {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.item-card-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.item-card-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.item-card-url {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--accent);
+  text-decoration: none;
+  word-break: break-all;
+  margin-bottom: 4px;
+}
+
+.item-card-url:hover {
+  text-decoration: underline;
+}
+
+.item-card-body {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.item-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.item-card-editing .item-card-actions {
+  margin-top: 14px;
+}
+
+.item-card-actions button {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+}
+
+.item-add-form {
+  max-width: 480px;
+  background: var(--panel);
+  border: 1px dashed var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
 
 @media (max-width: 760px) {
   .app-shell {
