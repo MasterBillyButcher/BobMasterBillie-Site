@@ -13,22 +13,19 @@
     <main class="main-content">
       <p class="page-eyebrow">Control room</p>
       <h1>Stream Notes</h1>
-      <p class="text-dim">Talking points, reminders, and anything to have on hand mid-stream.</p>
-      <div
-        id="item-mount"
-        data-item-list
-        data-section="notes"
-        data-title-label="Note title"
-        data-body-label="Details"
-        data-show-url="false"
-        data-url-label="URL"
-        data-empty-text="No notes yet. Jot something down below."
-        data-add-button-text="Add note"
-      ></div>
+      <p class="text-dim">Talking points, reminders, anything to have on hand mid-stream.</p>
+
+      <div class="doc-editor" data-doc-editor data-section="notes">
+        <div class="doc-toolbar">
+          <span class="doc-status">Loading…</span>
+          <button class="secondary doc-save-btn" type="button">Save</button>
+        </div>
+        <textarea class="doc-textarea" placeholder="Start typing..." spellcheck="true"></textarea>
+      </div>
     </main>
   </div>
   <script src="/js/csrf.js"></script>
   <script src="/js/nav.js"></script>
-  <script src="/js/items.js"></script>
+  <script src="/js/doc.js"></script>
 </body>
 </html>

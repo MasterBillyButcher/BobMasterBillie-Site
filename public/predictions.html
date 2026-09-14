@@ -13,22 +13,19 @@
     <main class="main-content">
       <p class="page-eyebrow">Control room</p>
       <h1>Predictions</h1>
-      <p class="text-dim">Track prediction ideas and outcomes for your channel.</p>
-      <div
-        id="item-mount"
-        data-item-list
-        data-section="predictions"
-        data-title-label="Prediction title"
-        data-body-label="Outcome / notes"
-        data-show-url="false"
-        data-url-label="URL"
-        data-empty-text="No predictions logged yet."
-        data-add-button-text="Add prediction"
-      ></div>
+      <p class="text-dim">Prediction ideas, outcomes, and notes for your channel.</p>
+
+      <div class="doc-editor" data-doc-editor data-section="predictions">
+        <div class="doc-toolbar">
+          <span class="doc-status">Loading…</span>
+          <button class="secondary doc-save-btn" type="button">Save</button>
+        </div>
+        <textarea class="doc-textarea" placeholder="Start typing..." spellcheck="true"></textarea>
+      </div>
     </main>
   </div>
   <script src="/js/csrf.js"></script>
   <script src="/js/nav.js"></script>
-  <script src="/js/items.js"></script>
+  <script src="/js/doc.js"></script>
 </body>
 </html>

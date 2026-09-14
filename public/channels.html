@@ -13,22 +13,19 @@
     <main class="main-content">
       <p class="page-eyebrow">Control room</p>
       <h1>Channels</h1>
-      <p class="text-dim">Other channels you raid, host, or want to keep an eye on.</p>
-      <div
-        id="item-mount"
-        data-item-list
-        data-section="channels"
-        data-title-label="Channel name"
-        data-body-label="Notes"
-        data-show-url="true"
-        data-url-label="Channel URL"
-        data-empty-text="No channels added yet."
-        data-add-button-text="Add channel"
-      ></div>
+      <p class="text-dim">Other channels you raid, host, or keep an eye on.</p>
+
+      <div class="doc-editor" data-doc-editor data-section="channels">
+        <div class="doc-toolbar">
+          <span class="doc-status">Loading…</span>
+          <button class="secondary doc-save-btn" type="button">Save</button>
+        </div>
+        <textarea class="doc-textarea" placeholder="Channel name, why, link..." spellcheck="true"></textarea>
+      </div>
     </main>
   </div>
   <script src="/js/csrf.js"></script>
   <script src="/js/nav.js"></script>
-  <script src="/js/items.js"></script>
+  <script src="/js/doc.js"></script>
 </body>
 </html>

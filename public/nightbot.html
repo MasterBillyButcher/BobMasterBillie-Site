@@ -13,27 +13,19 @@
     <main class="main-content">
       <p class="page-eyebrow">Control room</p>
       <h1>Nightbot</h1>
-      <section class="settings-section">
-        <h2>Not connected yet</h2>
-        <p>
-          Same story as Twitch — Nightbot has its own API and OAuth flow
-          via the
-          <a href="https://api-docs.nightbot.tv/" target="_blank" rel="noopener noreferrer">Nightbot API docs</a>,
-          which needs real credentials to work.
-        </p>
-        <p>In the meantime, Custom Commands (in the sidebar) works as a
-          plain reference list — jot down commands and responses there,
-          then paste them into Nightbot's dashboard by hand.</p>
-        <p>To wire up a real connection later:</p>
-        <ol>
-          <li>Register an app with Nightbot to get a Client ID and Client Secret</li>
-          <li>Add an OAuth login route and a server-side token exchange</li>
-          <li>Call the Nightbot API from the server to read/sync commands directly</li>
-        </ol>
-      </section>
+      <p class="text-dim">Nightbot commands and responses — write them here, then copy into Nightbot's dashboard by hand.</p>
+
+      <div class="doc-editor" data-doc-editor data-section="nightbot">
+        <div class="doc-toolbar">
+          <span class="doc-status">Loading…</span>
+          <button class="secondary doc-save-btn" type="button">Save</button>
+        </div>
+        <textarea class="doc-textarea" placeholder="!command -> response" spellcheck="true"></textarea>
+      </div>
     </main>
   </div>
   <script src="/js/csrf.js"></script>
   <script src="/js/nav.js"></script>
+  <script src="/js/doc.js"></script>
 </body>
 </html>

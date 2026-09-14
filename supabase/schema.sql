@@ -16,26 +16,22 @@ alter table public.dashboard_auth enable row level security;
 -- Intentionally no CREATE POLICY statements here: default-deny.
 
 -- ---------------------------------------------------------------------
--- Content storage for the dashboard's list-based sections: Custom
+-- One free-text document per section — Twitch, Nightbot, Custom
 -- Commands, Predictions, Channels, Stream Notes, Backlog, Veto Power,
--- Quick Links, CV. One generic table, distinguished by `section`.
--- Same lockdown pattern as dashboard_auth: RLS on, no anon/authenticated
--- policies, server-side access only via the service-role key.
+-- Quick Links, CV. Just a big text field per section, like a plain
+-- notes doc. Same lockdown pattern as dashboard_auth: RLS on, no
+-- anon/authenticated policies, server-side access only.
 -- ---------------------------------------------------------------------
-create table if not exists public.dashboard_items (
-  id uuid primary key default gen_random_uuid(),
-  section text not null,
-  title text not null,
-  body text,
-  url text,
-  position integer not null default 0,
-  created_at timestamptz not null default now(),
+create table if not exists public.dashboard_docs (
+  section text primary key,
+  content text not null default '',
   updated_at timestamptz not null default now()
 );
 
-create index if not exists dashboard_items_section_idx
-  on public.dashboard_items (section, position, created_at);
-
-alter table public.dashboard_items enable row level security;
+alter table public.dashboard_docs enable row level security;
 
 -- No CREATE POLICY statements here either: default-deny.
+
+-- If you previously created dashboard_items for the old list-based
+-- version, it's no longer used by the app and can be dropped:
+-- drop table if exists public.dashboard_items;

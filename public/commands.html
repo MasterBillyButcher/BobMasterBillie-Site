@@ -13,20 +13,19 @@
     <main class="main-content">
       <p class="page-eyebrow">Control room</p>
       <h1>Custom Commands</h1>
-      <p class="text-dim">Chat commands and what they should respond with — for your own reference, or to copy into Nightbot/StreamElements.</p>
-      <div
-        id="item-mount"
-        data-item-list
-        data-section="commands"
-        data-title-label="Command (e.g. !uptime)"
-        data-body-label="Response"
-        data-empty-text="No commands yet. Add your first one below."
-        data-add-button-text="Add command"
-      ></div>
+      <p class="text-dim">Chat commands and what they should respond with.</p>
+
+      <div class="doc-editor" data-doc-editor data-section="commands">
+        <div class="doc-toolbar">
+          <span class="doc-status">Loading…</span>
+          <button class="secondary doc-save-btn" type="button">Save</button>
+        </div>
+        <textarea class="doc-textarea" placeholder="!uptime -> shows how long the stream has been live" spellcheck="true"></textarea>
+      </div>
     </main>
   </div>
   <script src="/js/csrf.js"></script>
   <script src="/js/nav.js"></script>
-  <script src="/js/items.js"></script>
+  <script src="/js/doc.js"></script>
 </body>
 </html>

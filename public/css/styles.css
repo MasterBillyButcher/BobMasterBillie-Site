@@ -382,6 +382,16 @@ button.secondary:hover:not(:disabled) {
   padding: 16px 18px;
 }
 
+a.stat-card {
+  display: block;
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+}
+
+a.stat-card:hover {
+  border-color: var(--accent);
+}
+
 .stat-card .stat-label {
   display: flex;
   align-items: center;
@@ -462,90 +472,61 @@ button.secondary:hover:not(:disabled) {
 }
 
 /* ---------------------------------------------------------------------
-   Item lists (Commands, Predictions, Channels, Notes, Backlog, Veto,
-   Links, CV) — shared by public/js/items.js
+   Document editor (Twitch, Nightbot, Commands, Predictions, Channels,
+   Notes, Backlog, Veto, Links, CV) — shared by public/js/doc.js
    ------------------------------------------------------------------- */
 
-.item-list {
+.doc-editor {
+  margin-top: 24px;
+  max-width: 760px;
+}
+
+.doc-toolbar {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 24px 0;
-  max-width: 640px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
-.item-empty {
-  padding: 20px 0;
+.doc-status {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
 }
 
-.item-card {
+.doc-status-error {
+  color: #ff8577;
+}
+
+.doc-save-btn {
+  padding: 7px 14px;
+  font-size: 0.82rem;
+}
+
+.doc-textarea {
+  width: 100%;
+  min-height: 420px;
+  padding: 20px 22px;
   background: var(--panel);
   border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  font-size: 0.98rem;
+  line-height: 1.6;
+  font-family: var(--sans);
+  resize: vertical;
+  transition: border-color 0.15s ease;
 }
 
-.item-card-editing {
-  flex-direction: column;
-  align-items: stretch;
+.doc-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
-.item-card-main {
-  min-width: 0;
-  flex: 1;
-}
-
-.item-card-title {
-  font-weight: 600;
-  margin-bottom: 4px;
-  word-break: break-word;
-}
-
-.item-card-url {
-  display: block;
-  font-size: 0.82rem;
-  color: var(--accent);
-  text-decoration: none;
-  word-break: break-all;
-  margin-bottom: 4px;
-}
-
-.item-card-url:hover {
-  text-decoration: underline;
-}
-
-.item-card-body {
-  font-size: 0.88rem;
-  color: var(--text-dim);
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.item-card-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.item-card-editing .item-card-actions {
-  margin-top: 14px;
-}
-
-.item-card-actions button {
-  padding: 6px 12px;
-  font-size: 0.82rem;
-}
-
-.item-add-form {
-  max-width: 480px;
-  background: var(--panel);
-  border: 1px dashed var(--panel-border);
-  border-radius: var(--radius-md);
-  padding: 20px;
+.doc-textarea:disabled {
+  opacity: 0.6;
 }
 
 @media (max-width: 760px) {

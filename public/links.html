@@ -13,22 +13,19 @@
     <main class="main-content">
       <p class="page-eyebrow">Control room</p>
       <h1>Quick Links</h1>
-      <p class="text-dim">Bookmarks and links you reach for constantly — panel editor, overlay tools, socials.</p>
-      <div
-        id="item-mount"
-        data-item-list
-        data-section="links"
-        data-title-label="Label"
-        data-body-label="Notes"
-        data-show-url="true"
-        data-url-label="URL"
-        data-empty-text="No links yet."
-        data-add-button-text="Add link"
-      ></div>
+      <p class="text-dim">Bookmarks and links you reach for constantly.</p>
+
+      <div class="doc-editor" data-doc-editor data-section="links">
+        <div class="doc-toolbar">
+          <span class="doc-status">Loading…</span>
+          <button class="secondary doc-save-btn" type="button">Save</button>
+        </div>
+        <textarea class="doc-textarea" placeholder="Label -> https://..." spellcheck="true"></textarea>
+      </div>
     </main>
   </div>
   <script src="/js/csrf.js"></script>
   <script src="/js/nav.js"></script>
-  <script src="/js/items.js"></script>
+  <script src="/js/doc.js"></script>
 </body>
 </html>

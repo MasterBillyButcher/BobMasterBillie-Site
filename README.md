@@ -37,23 +37,23 @@ Stream Notes, Backlog, Veto Power, Quick Links, CV, Settings).
 
 ## Content sections
 
-Commands, Predictions, Channels, Stream Notes, Backlog, Veto Power, Quick
-Links, and CV are all real, working add/edit/delete lists — backed by
-one generic `dashboard_items` table in Supabase (same lockdown pattern as
-`dashboard_auth`: RLS on, no anon/authenticated policies, server-side
-only). Each page just configures labels via `data-*` attributes on a
-mount `<div>`; the actual list/add/edit/delete logic lives once in
-`public/js/items.js` and talks to `/api/items`.
+Every section — Twitch, Nightbot, Custom Commands, Predictions,
+Channels, Stream Notes, Backlog, Veto Power, Quick Links, CV — is just a
+plain text document, like a Word doc or Google Doc per page. One big
+textarea, autosaves 1.5s after you stop typing (plus an explicit Save
+button and save-on-blur so nothing gets lost switching tabs). Backed by
+one row per section in a `dashboard_docs` table in Supabase (same
+lockdown pattern as `dashboard_auth`: RLS on, no anon/authenticated
+policies, server-side only).
 
-**Twitch and Nightbot are intentionally left as "not connected" pages.**
-Both need real OAuth credentials from their own developer consoles
-(Twitch Developer Console, Nightbot API) to do anything real — there's
-no way to build working integrations without those, so rather than fake
-it with placeholder data, each page explains exactly what's needed to
-wire up a real connection later.
+The actual editor logic lives once in `public/js/doc.js`; each page is
+just a `<textarea>` inside a `data-doc-editor` wrapper naming its
+section. The Dashboard home page lists all ten sections with their
+last-edited time, pulled from `/api/docs`.
 
-The Dashboard home page shows live counts (Predictions, Backlog,
-Commands, Quick Links) pulled from the same `/api/items` endpoint.
+There's no structured fields, no add/edit/delete forms, no per-item
+anything — just type, and it saves. Exactly like using a Word doc to
+jot things down, just in the browser and organized by section.
 
 ## Setup — no local commands needed
 
@@ -70,26 +70,22 @@ You can set the dashboard password entirely through the deployed site.
    );
    alter table public.dashboard_auth enable row level security;
 
-   create table if not exists public.dashboard_items (
-     id uuid primary key default gen_random_uuid(),
-     section text not null,
-     title text not null,
-     body text,
-     url text,
-     position integer not null default 0,
-     created_at timestamptz not null default now(),
+   create table if not exists public.dashboard_docs (
+     section text primary key,
+     content text not null default '',
      updated_at timestamptz not null default now()
    );
-   create index if not exists dashboard_items_section_idx
-     on public.dashboard_items (section, position, created_at);
-   alter table public.dashboard_items enable row level security;
+   alter table public.dashboard_docs enable row level security;
 
    -- No CREATE POLICY statements on either table: default-deny.
+
+   -- If you previously created dashboard_items for an earlier version,
+   -- it's unused now and can be dropped:
+   -- drop table if exists public.dashboard_items;
    ```
-   (Same content as `supabase/schema.sql` in this repo. If you already
-   have `dashboard_auth` set up, running this again is safe — `create
-   table if not exists` skips anything already there, so it just adds
-   `dashboard_items`.)
+   (Same content as `supabase/schema.sql`. Safe to run again if
+   `dashboard_auth` already exists — `create table if not exists` just
+   skips it and adds `dashboard_docs`.)
 2. **Set these environment variables in Vercel:**
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_ROLE_KEY`

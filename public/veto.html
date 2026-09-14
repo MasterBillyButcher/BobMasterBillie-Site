@@ -14,21 +14,18 @@
       <p class="page-eyebrow">Control room</p>
       <h1>Veto Power</h1>
       <p class="text-dim">Things that are off-limits or need a second thought before doing on stream.</p>
-      <div
-        id="item-mount"
-        data-item-list
-        data-section="veto"
-        data-title-label="Item"
-        data-body-label="Why"
-        data-show-url="false"
-        data-url-label="URL"
-        data-empty-text="Nothing vetoed yet."
-        data-add-button-text="Add item"
-      ></div>
+
+      <div class="doc-editor" data-doc-editor data-section="veto">
+        <div class="doc-toolbar">
+          <span class="doc-status">Loading…</span>
+          <button class="secondary doc-save-btn" type="button">Save</button>
+        </div>
+        <textarea class="doc-textarea" placeholder="Start typing..." spellcheck="true"></textarea>
+      </div>
     </main>
   </div>
   <script src="/js/csrf.js"></script>
   <script src="/js/nav.js"></script>
-  <script src="/js/items.js"></script>
+  <script src="/js/doc.js"></script>
 </body>
 </html>

@@ -13,22 +13,19 @@
     <main class="main-content">
       <p class="page-eyebrow">Control room</p>
       <h1>CV</h1>
-      <p class="text-dim">Bio, credentials, and background info — handy for applications, media kits, or sponsor outreach.</p>
-      <div
-        id="item-mount"
-        data-item-list
-        data-section="cv"
-        data-title-label="Section title (e.g. Bio, Skills, Experience)"
-        data-body-label="Content"
-        data-show-url="false"
-        data-url-label="URL"
-        data-empty-text="Nothing here yet."
-        data-add-button-text="Add section"
-      ></div>
+      <p class="text-dim">Bio, credentials, and background info.</p>
+
+      <div class="doc-editor" data-doc-editor data-section="cv">
+        <div class="doc-toolbar">
+          <span class="doc-status">Loading…</span>
+          <button class="secondary doc-save-btn" type="button">Save</button>
+        </div>
+        <textarea class="doc-textarea" placeholder="Start typing..." spellcheck="true"></textarea>
+      </div>
     </main>
   </div>
   <script src="/js/csrf.js"></script>
   <script src="/js/nav.js"></script>
-  <script src="/js/items.js"></script>
+  <script src="/js/doc.js"></script>
 </body>
 </html>
