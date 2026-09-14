@@ -113,6 +113,17 @@ npm run dev
 
 Both paths write to the same `dashboard_auth` table.
 
+### Seeding starter content (optional)
+
+`npm run seed:content` (needs `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
+in `.env.local`, same as above) writes starter text into `dashboard_docs`
+for Twitch, Predictions, Stream Notes, Backlog, Veto Power, Quick Links,
+Custom Commands, Nightbot, and CV — pulled from the source content doc so
+the dashboard isn't blank on first login. `channels` and `settings` are
+left empty. It's an upsert keyed on section, so re-running it later resets
+those sections back to the starter text — only do that on purpose. Every
+section stays freely editable afterward from its page.
+
 ## Deploying to Vercel
 
 `vercel.json` routes every request through `server.js` as a single Node
