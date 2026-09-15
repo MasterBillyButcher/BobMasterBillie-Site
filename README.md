@@ -57,10 +57,20 @@ jot things down, just in the browser and organized by section.
 
 ### Per-page extras
 
-- **View / Edit toggle** — pages open in a clean read-only view (better
-  for content with headers, bullets, and emoji than a raw text box).
-  Click "Edit" or click directly into the text to start editing; click
-  "Done" (or navigate away) to save and return to the view.
+- **Structured view** — content isn't dumped as a flat text block.
+  Standalone short lines become titles, the first line of a group
+  becomes a section header, `term → description` lines render as a
+  command chip + description, and `•`/`-`/`1.` lines render as proper
+  list items. This is a light heuristic (not full markdown), so content
+  that doesn't fit the pattern just falls back to plain paragraphs —
+  nothing breaks either way.
+- **View / Edit toggle** — click "Edit" or click directly into the
+  content to start editing (monospace, so command syntax lines up);
+  click "Done" (or navigate away) to save and return to the formatted
+  view.
+- **Counters as real badges** — word count, character count, and
+  estimated reading time shown as separate pill badges, not crammed into
+  the save-status text.
 - **Undo last save** — every save keeps the previous version around;
   "Undo last save" restores it (one level deep, not full history). Button
   only shows up when there's actually something to revert to.
@@ -69,7 +79,6 @@ jot things down, just in the browser and organized by section.
 - **Unsaved changes warning** — closing the tab or navigating away with
   unsaved edits prompts you first.
 - **Download** — grabs just that one page's content as a `.txt` file.
-- **Character count** — alongside the word count in the status line.
 - Leading/trailing blank lines get trimmed automatically on save —
   doesn't touch indentation or spacing inside the content.
 

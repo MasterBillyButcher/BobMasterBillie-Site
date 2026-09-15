@@ -4,8 +4,15 @@
  * Links, CV). Each page is one row in Supabase per section.
  *
  * Two modes:
- * - View (default): a nicely-formatted read-only pane — better for
- *   content with headers/bullets/emoji than a raw form field.
+ * - View (default): a structured read-only render. Content is split
+ *   into blank-line-separated blocks; a block's first line becomes a
+ *   heading if the block has more than one line and that line is short
+ *   and doesn't look like a bullet or a "term → description" line.
+ *   Lines with "→" render as a term chip + description. Lines starting
+ *   with "•", "-", or "1." render as list items. Everything else is a
+ *   plain paragraph line. This is a light heuristic, not a markdown
+ *   parser — content that doesn't fit the pattern just falls back to
+ *   plain paragraphs, so nothing breaks either way.
  * - Edit: the textarea, with autosave 1.5s after typing stops, an
  *   explicit Save button, Ctrl/Cmd+S, save-on-blur, a warning before
  *   leaving with unsaved changes, one-level undo, and download.
@@ -18,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const textarea = mount.querySelector('.doc-textarea');
   const viewEl = mount.querySelector('.doc-view');
   const statusEl = mount.querySelector('.doc-status');
+  const countersEl = mount.querySelector('.doc-counters');
   const editBtn = mount.querySelector('.doc-edit-btn');
   const saveBtn = mount.querySelector('.doc-save-btn');
   const revertBtn = mount.querySelector('.doc-revert-btn');
@@ -35,15 +43,31 @@ document.addEventListener('DOMContentLoaded', () => {
     return trimmed.split(/\s+/).length;
   }
 
-  function statusWithCounts(base) {
+  function badge(text) {
+    const el = document.createElement('span');
+    el.className = 'doc-counter-badge';
+    el.textContent = text;
+    return el;
+  }
+
+  function updateCounters() {
+    if (!countersEl) return;
     const words = countWords(textarea.value);
     const chars = textarea.value.length;
-    return `${base} · ${words} word${words === 1 ? '' : 's'} · ${chars} char${chars === 1 ? '' : 's'}`;
+    const readMins = words === 0 ? 0 : Math.max(1, Math.round(words / 200));
+
+    countersEl.innerHTML = '';
+    countersEl.appendChild(badge(`${words} word${words === 1 ? '' : 's'}`));
+    countersEl.appendChild(badge(`${chars} char${chars === 1 ? '' : 's'}`));
+    if (readMins > 0) {
+      countersEl.appendChild(badge(`~${readMins} min read`));
+    }
   }
 
   function setStatus(text, isError) {
-    statusEl.textContent = statusWithCounts(text);
+    statusEl.textContent = text;
     statusEl.classList.toggle('doc-status-error', !!isError);
+    updateCounters();
   }
 
   function formatTime(iso) {
@@ -57,16 +81,101 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ---- Structured view renderer ------------------------------------
+
+  function looksLikeHeadingText(line) {
+    const t = line.trim();
+    if (t.length === 0 || t.length > 60) return false;
+    if (t.includes('→')) return false;
+    if (/^[•\-]\s/.test(t)) return false;
+    if (/^\d+\.\s/.test(t)) return false;
+    return true;
+  }
+
+  function renderArrowRow(line) {
+    const idx = line.indexOf('→');
+    const term = line.slice(0, idx).trim();
+    const desc = line.slice(idx + 1).trim();
+    const row = document.createElement('div');
+    row.className = 'doc-row';
+    const chip = document.createElement('span');
+    chip.className = 'doc-chip';
+    chip.textContent = term;
+    const descEl = document.createElement('span');
+    descEl.className = 'doc-row-desc';
+    descEl.textContent = desc;
+    row.append(chip, descEl);
+    return row;
+  }
+
+  function renderBullet(line, numbered) {
+    const el = document.createElement('div');
+    el.className = numbered ? 'doc-bullet doc-bullet-numbered' : 'doc-bullet';
+    el.textContent = numbered ? line.trim() : line.trim().replace(/^[•\-]\s*/, '');
+    return el;
+  }
+
+  function renderParagraph(line) {
+    const el = document.createElement('div');
+    el.className = 'doc-paragraph';
+    el.textContent = line;
+    return el;
+  }
+
   function renderView() {
     const content = textarea.value;
+    viewEl.innerHTML = '';
+
     if (content.trim().length === 0) {
-      viewEl.textContent = 'Nothing here yet — click Edit to add something.';
-      viewEl.classList.add('doc-view-empty');
-    } else {
-      viewEl.textContent = content;
-      viewEl.classList.remove('doc-view-empty');
+      const empty = document.createElement('div');
+      empty.className = 'doc-view-empty';
+      empty.textContent = 'Nothing here yet — click Edit to add something.';
+      viewEl.appendChild(empty);
+      return;
     }
+
+    const blocks = content.split(/\n\s*\n/);
+    blocks.forEach((block) => {
+      const lines = block.split('\n').filter((l) => l.trim() !== '');
+      if (lines.length === 0) return;
+
+      const blockEl = document.createElement('div');
+      blockEl.className = 'doc-block';
+
+      let startIdx = 0;
+      if (lines.length === 1 && looksLikeHeadingText(lines[0])) {
+        const heading = document.createElement('div');
+        heading.className = 'doc-heading-main';
+        heading.textContent = lines[0].trim();
+        blockEl.appendChild(heading);
+        startIdx = 1;
+      } else if (lines.length > 1 && looksLikeHeadingText(lines[0])) {
+        const heading = document.createElement('div');
+        heading.className = 'doc-heading';
+        heading.textContent = lines[0].trim();
+        blockEl.appendChild(heading);
+        startIdx = 1;
+      }
+
+      for (let i = startIdx; i < lines.length; i++) {
+        const line = lines[i];
+        const trimmed = line.trim();
+        if (trimmed.includes('→')) {
+          blockEl.appendChild(renderArrowRow(trimmed));
+        } else if (/^[•\-]\s/.test(trimmed)) {
+          blockEl.appendChild(renderBullet(trimmed, false));
+        } else if (/^\d+\.\s/.test(trimmed)) {
+          blockEl.appendChild(renderBullet(trimmed, true));
+        } else {
+          blockEl.appendChild(renderParagraph(line));
+        }
+      }
+
+      viewEl.appendChild(blockEl);
+    });
   }
+
+  // ---- Edit/view mode + save/load/revert/download -------------------
 
   function updateRevertVisibility() {
     if (!revertBtn) return;
@@ -142,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       lastSavedContent = data.doc.content;
       textarea.value = data.doc.content; // reflects server-side trim
-      hasPreviousVersion = true; // saveDoc always shifts the prior content into previous_content
+      hasPreviousVersion = true;
       updateRevertVisibility();
       setStatus('Saved just now');
     } catch {
@@ -196,17 +305,11 @@ document.addEventListener('DOMContentLoaded', () => {
     saveTimer = setTimeout(save, 1500);
   });
 
-  // Save on blur too, so switching tabs/pages doesn't lose anything
-  // waiting on the debounce timer. Doesn't leave edit mode by itself —
-  // that's only via the Edit/Done button — so a stray click elsewhere
-  // doesn't yank the page out from under someone mid-thought.
   textarea.addEventListener('blur', () => {
     clearTimeout(saveTimer);
     save();
   });
 
-  // Ctrl/Cmd+S saves immediately instead of triggering the browser's
-  // "save page" dialog.
   textarea.addEventListener('keydown', (e) => {
     const isSaveShortcut = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's';
     if (isSaveShortcut) {
@@ -216,7 +319,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Warn before closing/navigating away with unsaved changes.
   window.addEventListener('beforeunload', (e) => {
     if (hasUnsavedChanges()) {
       e.preventDefault();
