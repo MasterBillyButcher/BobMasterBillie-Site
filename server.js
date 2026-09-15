@@ -22,6 +22,7 @@ const {
   upsertDashboardPassword,
   getDoc,
   saveDoc,
+  revertDoc,
   listDocs,
 } = require('./lib/supabase-admin');
 const { ensureCsrfCookie, verifyCsrf } = require('./lib/csrf');
@@ -315,8 +316,9 @@ const VALID_SECTIONS = new Set([
 const MAX_DOC_LENGTH = 200000; // generous — this is meant to replace a Word doc
 
 app.get('/api/docs', requireAuthApi, async (req, res) => {
+  const full = req.query.full === '1' || req.query.full === 'true';
   try {
-    const docs = await listDocs([...VALID_SECTIONS]);
+    const docs = await listDocs([...VALID_SECTIONS], { full });
     res.json({ docs });
   } catch (err) {
     res.status(500).json({ error: err.message || 'Failed to load documents.' });
@@ -356,6 +358,20 @@ app.put('/api/docs/:section', requireAuthApi, verifyCsrf, async (req, res) => {
     res.json({ doc });
   } catch (err) {
     res.status(500).json({ error: err.message || 'Failed to save document.' });
+  }
+});
+
+app.post('/api/docs/:section/revert', requireAuthApi, verifyCsrf, async (req, res) => {
+  const { section } = req.params;
+  if (!VALID_SECTIONS.has(section)) {
+    return res.status(400).json({ error: 'Unknown section.' });
+  }
+
+  try {
+    const doc = await revertDoc(section);
+    res.json({ doc });
+  } catch (err) {
+    res.status(400).json({ error: err.message || 'Nothing to revert to.' });
   }
 });
 

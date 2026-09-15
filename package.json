@@ -7,7 +7,6 @@
     "start": "node server.js",
     "dev": "node server.js",
     "seed:password": "node scripts/seed-password.mjs",
-    "seed:content": "node scripts/seed-content.mjs",
     "test": "AUTH_TEST_MODE=1 SESSION_SECRET=test-only-session-secret-do-not-use-in-prod-env SETUP_SECRET=test-only-setup-secret-do-not-use NODE_ENV=test node --test tests/**/*.test.js"
   },
   "dependencies": {

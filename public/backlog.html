@@ -18,7 +18,11 @@
       <div class="doc-editor" data-doc-editor data-section="backlog">
         <div class="doc-toolbar">
           <span class="doc-status">Loading…</span>
-          <button class="secondary doc-save-btn" type="button">Save</button>
+          <div class="doc-toolbar-actions">
+            <button class="secondary doc-revert-btn hidden" type="button">Undo last save</button>
+            <button class="secondary doc-download-btn" type="button">Download</button>
+            <button class="secondary doc-save-btn" type="button">Save</button>
+          </div>
         </div>
         <textarea class="doc-textarea" placeholder="Start typing..." spellcheck="true"></textarea>
       </div>

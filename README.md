@@ -55,6 +55,29 @@ There's no structured fields, no add/edit/delete forms, no per-item
 anything — just type, and it saves. Exactly like using a Word doc to
 jot things down, just in the browser and organized by section.
 
+### Dashboard extras
+
+- **Search** — the box on the Dashboard searches the full text of every
+  section at once and jumps you to the matching one, with a snippet of
+  where it matched.
+- **Export all as .txt** — downloads everything across all ten sections
+  into one plain-text file, headed by section, so you always have a
+  local backup outside the browser — closing the loop back to "it's
+  basically my old Word doc."
+- **Word count** — shown next to the save status on every doc page.
+
+### Per-page extras
+
+- **Undo last save** — every save keeps the previous version around;
+  "Undo last save" restores it (one level deep, not full history). Button
+  only shows up when there's actually something to revert to.
+- **Ctrl/Cmd+S** — saves immediately instead of opening the browser's
+  save-page dialog.
+- **Unsaved changes warning** — closing the tab or navigating away with
+  unsaved edits prompts you first.
+- **Download** — grabs just that one page's content as a `.txt` file.
+- **Character count** — alongside the word count in the status line.
+
 ## Setup — no local commands needed
 
 You can set the dashboard password entirely through the deployed site.
@@ -73,11 +96,18 @@ You can set the dashboard password entirely through the deployed site.
    create table if not exists public.dashboard_docs (
      section text primary key,
      content text not null default '',
+     previous_content text,
+     previous_updated_at timestamptz,
      updated_at timestamptz not null default now()
    );
    alter table public.dashboard_docs enable row level security;
 
    -- No CREATE POLICY statements on either table: default-deny.
+
+   -- If you already had dashboard_docs from an earlier version, just
+   -- add the two new columns instead of recreating the table:
+   -- alter table public.dashboard_docs add column if not exists previous_content text;
+   -- alter table public.dashboard_docs add column if not exists previous_updated_at timestamptz;
 
    -- If you previously created dashboard_items for an earlier version,
    -- it's unused now and can be dropped:
@@ -85,7 +115,7 @@ You can set the dashboard password entirely through the deployed site.
    ```
    (Same content as `supabase/schema.sql`. Safe to run again if
    `dashboard_auth` already exists — `create table if not exists` just
-   skips it and adds `dashboard_docs`.)
+   skips it.)
 2. **Set these environment variables in Vercel:**
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_ROLE_KEY`
@@ -112,17 +142,6 @@ npm run dev
 ```
 
 Both paths write to the same `dashboard_auth` table.
-
-### Seeding starter content (optional)
-
-`npm run seed:content` (needs `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
-in `.env.local`, same as above) writes starter text into `dashboard_docs`
-for Twitch, Predictions, Stream Notes, Backlog, Veto Power, Quick Links,
-Custom Commands, Nightbot, and CV — pulled from the source content doc so
-the dashboard isn't blank on first login. `channels` and `settings` are
-left empty. It's an upsert keyed on section, so re-running it later resets
-those sections back to the starter text — only do that on purpose. Every
-section stays freely editable afterward from its page.
 
 ## Deploying to Vercel
 

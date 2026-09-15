@@ -288,6 +288,13 @@ test('/api/docs/:section: empty by default, then save and read back', async () =
   const { docs } = await overviewRes.json();
   const backlogEntry = docs.find((d) => d.section === 'backlog');
   assert.ok(backlogEntry && backlogEntry.updated_at);
+  assert.equal(backlogEntry.content, undefined, 'default overview should not include content');
+
+  // ?full=1 includes content, for export/search.
+  const fullRes = await fetch(`${baseUrl}/api/docs?full=1`, { headers: { Cookie: jar.header() } });
+  const { docs: fullDocs } = await fullRes.json();
+  const backlogFull = fullDocs.find((d) => d.section === 'backlog');
+  assert.equal(backlogFull.content, 'Play Hollow Knight');
 
   // Non-string content is rejected.
   const badRes = await fetch(`${baseUrl}/api/docs/notes`, {
@@ -296,4 +303,62 @@ test('/api/docs/:section: empty by default, then save and read back', async () =
     body: JSON.stringify({ content: 12345 }),
   });
   assert.equal(badRes.status, 400);
+});
+
+test('/api/docs/:section/revert: no previous version yet fails cleanly', async () => {
+  const jar = new CookieJar();
+  const csrf = await primeCsrf(jar);
+  const loginRes = await fetch(`${baseUrl}/api/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Cookie: jar.header(), 'X-CSRF-Token': csrf },
+    body: JSON.stringify({ password: TEST_PASSWORD }),
+  });
+  jar.absorb(loginRes);
+
+  const res = await fetch(`${baseUrl}/api/docs/veto/revert`, {
+    method: 'POST',
+    headers: { Cookie: jar.header(), 'X-CSRF-Token': csrf },
+  });
+  assert.equal(res.status, 400);
+});
+
+test('/api/docs/:section/revert: save twice, revert restores the prior version', async () => {
+  const jar = new CookieJar();
+  const csrf = await primeCsrf(jar);
+  const loginRes = await fetch(`${baseUrl}/api/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Cookie: jar.header(), 'X-CSRF-Token': csrf },
+    body: JSON.stringify({ password: TEST_PASSWORD }),
+  });
+  jar.absorb(loginRes);
+
+  await fetch(`${baseUrl}/api/docs/links`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Cookie: jar.header(), 'X-CSRF-Token': csrf },
+    body: JSON.stringify({ content: 'version one' }),
+  });
+  const secondSave = await fetch(`${baseUrl}/api/docs/links`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Cookie: jar.header(), 'X-CSRF-Token': csrf },
+    body: JSON.stringify({ content: 'version two' }),
+  });
+  const { doc: secondDoc } = await secondSave.json();
+  assert.equal(secondDoc.content, 'version two');
+  assert.equal(secondDoc.previous_content, 'version one');
+
+  const revertRes = await fetch(`${baseUrl}/api/docs/links/revert`, {
+    method: 'POST',
+    headers: { Cookie: jar.header(), 'X-CSRF-Token': csrf },
+  });
+  assert.equal(revertRes.status, 200);
+  const { doc: reverted } = await revertRes.json();
+  assert.equal(reverted.content, 'version one');
+  assert.equal(reverted.previous_content, null);
+
+  // Reverting again with nothing left to revert to fails cleanly.
+  const revertAgain = await fetch(`${baseUrl}/api/docs/links/revert`, {
+    method: 'POST',
+    headers: { Cookie: jar.header(), 'X-CSRF-Token': csrf },
+  });
+  assert.equal(revertAgain.status, 400);
 });

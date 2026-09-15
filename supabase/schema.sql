@@ -25,12 +25,19 @@ alter table public.dashboard_auth enable row level security;
 create table if not exists public.dashboard_docs (
   section text primary key,
   content text not null default '',
+  previous_content text,
+  previous_updated_at timestamptz,
   updated_at timestamptz not null default now()
 );
 
 alter table public.dashboard_docs enable row level security;
 
 -- No CREATE POLICY statements here either: default-deny.
+
+-- If you already created dashboard_docs before this file added
+-- one-level undo, run this once to add the two new columns:
+-- alter table public.dashboard_docs add column if not exists previous_content text;
+-- alter table public.dashboard_docs add column if not exists previous_updated_at timestamptz;
 
 -- If you previously created dashboard_items for the old list-based
 -- version, it's no longer used by the app and can be dropped:
