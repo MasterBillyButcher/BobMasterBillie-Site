@@ -501,6 +501,13 @@ a.stat-card:hover {
   background: var(--text-faint);
 }
 
+.stat-preview {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
 /* ---------------------------------------------------------------------
    Settings / info panels
    ------------------------------------------------------------------- */
@@ -607,6 +614,27 @@ a.stat-card:hover {
 
 .doc-textarea:disabled {
   opacity: 0.6;
+}
+
+.doc-view {
+  width: 100%;
+  min-height: 420px;
+  padding: 24px 26px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  font-size: 0.98rem;
+  line-height: 1.75;
+  font-family: var(--sans);
+  white-space: pre-wrap;
+  word-break: break-word;
+  cursor: text;
+}
+
+.doc-view-empty {
+  color: var(--text-faint);
+  font-style: italic;
 }
 
 @media (max-width: 760px) {

@@ -32,15 +32,23 @@
     });
   }
 
+  function snippetOf(content) {
+    if (!content || !content.trim()) return null;
+    const flat = content.replace(/\s+/g, ' ').trim();
+    return flat.length > 90 ? flat.slice(0, 90) + '…' : flat;
+  }
+
   function renderGrid() {
     const grid = document.getElementById('overview-grid');
     if (!grid) return;
     grid.innerHTML = SECTION_ORDER.map((section) => {
       const doc = allDocs.find((d) => d.section === section);
+      const preview = doc ? snippetOf(doc.content) : null;
       return `
         <a class="stat-card" href="/${section}.html">
           <div class="stat-label">${LABELS[section]}</div>
           <div class="stat-status"><span class="dot"></span> ${formatTime(doc ? doc.updated_at : null)}</div>
+          ${preview ? `<div class="stat-preview">${escapeHtml(preview)}</div>` : ''}
         </a>
       `;
     }).join('');

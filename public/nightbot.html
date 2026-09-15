@@ -19,12 +19,14 @@
         <div class="doc-toolbar">
           <span class="doc-status">Loading…</span>
           <div class="doc-toolbar-actions">
+            <button class="primary doc-edit-btn" type="button">Edit</button>
             <button class="secondary doc-revert-btn hidden" type="button">Undo last save</button>
             <button class="secondary doc-download-btn" type="button">Download</button>
-            <button class="secondary doc-save-btn" type="button">Save</button>
+            <button class="secondary doc-save-btn hidden" type="button">Save</button>
           </div>
         </div>
-        <textarea class="doc-textarea" placeholder="!command -> response" spellcheck="true"></textarea>
+        <div class="doc-view"></div>
+        <textarea class="doc-textarea hidden" placeholder="!command -> response" spellcheck="true"></textarea>
       </div>
     </main>
   </div>

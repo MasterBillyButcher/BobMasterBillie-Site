@@ -354,7 +354,7 @@ app.put('/api/docs/:section', requireAuthApi, verifyCsrf, async (req, res) => {
   }
 
   try {
-    const doc = await saveDoc(section, content);
+    const doc = await saveDoc(section, content.trim());
     res.json({ doc });
   } catch (err) {
     res.status(500).json({ error: err.message || 'Failed to save document.' });

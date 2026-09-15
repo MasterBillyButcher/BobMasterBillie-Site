@@ -55,19 +55,12 @@ There's no structured fields, no add/edit/delete forms, no per-item
 anything — just type, and it saves. Exactly like using a Word doc to
 jot things down, just in the browser and organized by section.
 
-### Dashboard extras
-
-- **Search** — the box on the Dashboard searches the full text of every
-  section at once and jumps you to the matching one, with a snippet of
-  where it matched.
-- **Export all as .txt** — downloads everything across all ten sections
-  into one plain-text file, headed by section, so you always have a
-  local backup outside the browser — closing the loop back to "it's
-  basically my old Word doc."
-- **Word count** — shown next to the save status on every doc page.
-
 ### Per-page extras
 
+- **View / Edit toggle** — pages open in a clean read-only view (better
+  for content with headers, bullets, and emoji than a raw text box).
+  Click "Edit" or click directly into the text to start editing; click
+  "Done" (or navigate away) to save and return to the view.
 - **Undo last save** — every save keeps the previous version around;
   "Undo last save" restores it (one level deep, not full history). Button
   only shows up when there's actually something to revert to.
@@ -77,6 +70,20 @@ jot things down, just in the browser and organized by section.
   unsaved edits prompts you first.
 - **Download** — grabs just that one page's content as a `.txt` file.
 - **Character count** — alongside the word count in the status line.
+- Leading/trailing blank lines get trimmed automatically on save —
+  doesn't touch indentation or spacing inside the content.
+
+### Dashboard extras
+
+- **Content previews** — each section's card on the Dashboard shows a
+  snippet of what's actually in it, not just a timestamp.
+- **Search** — the box on the Dashboard searches the full text of every
+  section at once and jumps you to the matching one, with a snippet of
+  where it matched.
+- **Export all as .txt** — downloads everything across all ten sections
+  into one plain-text file, headed by section, so you always have a
+  local backup outside the browser — closing the loop back to "it's
+  basically my old Word doc."
 
 ## Setup — no local commands needed
 

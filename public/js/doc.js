@@ -1,11 +1,14 @@
 /**
  * Generic document editor, shared by every content page (Twitch,
  * Nightbot, Commands, Predictions, Channels, Notes, Backlog, Veto,
- * Links, CV). Each page is just a big textarea backed by one row in
- * Supabase per section. Auto-saves 1.5s after typing stops, plus an
- * explicit Save button, Ctrl/Cmd+S, save-on-blur, a warning before
- * leaving with unsaved changes, one-level undo, and a per-page
- * download button.
+ * Links, CV). Each page is one row in Supabase per section.
+ *
+ * Two modes:
+ * - View (default): a nicely-formatted read-only pane — better for
+ *   content with headers/bullets/emoji than a raw form field.
+ * - Edit: the textarea, with autosave 1.5s after typing stops, an
+ *   explicit Save button, Ctrl/Cmd+S, save-on-blur, a warning before
+ *   leaving with unsaved changes, one-level undo, and download.
  */
 document.addEventListener('DOMContentLoaded', () => {
   const mount = document.querySelector('[data-doc-editor]');
@@ -13,7 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const section = mount.dataset.section;
   const textarea = mount.querySelector('.doc-textarea');
+  const viewEl = mount.querySelector('.doc-view');
   const statusEl = mount.querySelector('.doc-status');
+  const editBtn = mount.querySelector('.doc-edit-btn');
   const saveBtn = mount.querySelector('.doc-save-btn');
   const revertBtn = mount.querySelector('.doc-revert-btn');
   const downloadBtn = mount.querySelector('.doc-download-btn');
@@ -22,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let hasPreviousVersion = false;
   let saveTimer = null;
   let saving = false;
+  let editing = false;
 
   function countWords(text) {
     const trimmed = text.trim();
@@ -51,6 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function renderView() {
+    const content = textarea.value;
+    if (content.trim().length === 0) {
+      viewEl.textContent = 'Nothing here yet — click Edit to add something.';
+      viewEl.classList.add('doc-view-empty');
+    } else {
+      viewEl.textContent = content;
+      viewEl.classList.remove('doc-view-empty');
+    }
+  }
+
   function updateRevertVisibility() {
     if (!revertBtn) return;
     revertBtn.classList.toggle('hidden', !hasPreviousVersion);
@@ -58,6 +75,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function hasUnsavedChanges() {
     return textarea.value !== lastSavedContent;
+  }
+
+  function enterEditMode() {
+    editing = true;
+    viewEl.classList.add('hidden');
+    textarea.classList.remove('hidden');
+    saveBtn.classList.remove('hidden');
+    editBtn.textContent = 'Done';
+    textarea.focus();
+  }
+
+  async function exitEditMode() {
+    clearTimeout(saveTimer);
+    await save();
+    editing = false;
+    textarea.classList.add('hidden');
+    viewEl.classList.remove('hidden');
+    saveBtn.classList.add('hidden');
+    editBtn.textContent = 'Edit';
+    renderView();
   }
 
   async function load() {
@@ -75,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       hasPreviousVersion =
         data.doc.previous_content !== null && data.doc.previous_content !== undefined;
       updateRevertVisibility();
+      renderView();
       const savedAt = formatTime(data.doc.updated_at);
       setStatus(savedAt ? `Saved · last edited ${savedAt}` : 'Nothing saved yet');
     } catch {
@@ -102,7 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setStatus(data.error || 'Failed to save.', true);
         return;
       }
-      lastSavedContent = content;
+      lastSavedContent = data.doc.content;
+      textarea.value = data.doc.content; // reflects server-side trim
       hasPreviousVersion = true; // saveDoc always shifts the prior content into previous_content
       updateRevertVisibility();
       setStatus('Saved just now');
@@ -132,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
       lastSavedContent = textarea.value;
       hasPreviousVersion = false;
       updateRevertVisibility();
+      renderView();
       setStatus('Restored previous version');
     } catch {
       setStatus('Network error — could not revert.', true);
@@ -157,7 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Save on blur too, so switching tabs/pages doesn't lose anything
-  // waiting on the debounce timer.
+  // waiting on the debounce timer. Doesn't leave edit mode by itself —
+  // that's only via the Edit/Done button — so a stray click elsewhere
+  // doesn't yank the page out from under someone mid-thought.
   textarea.addEventListener('blur', () => {
     clearTimeout(saveTimer);
     save();
@@ -180,6 +222,20 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       e.returnValue = '';
     }
+  });
+
+  if (editBtn) {
+    editBtn.addEventListener('click', () => {
+      if (editing) {
+        exitEditMode();
+      } else {
+        enterEditMode();
+      }
+    });
+  }
+
+  viewEl.addEventListener('click', () => {
+    if (!editing) enterEditMode();
   });
 
   if (saveBtn) {
