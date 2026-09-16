@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const editBtn = mount.querySelector('.doc-edit-btn');
   const saveBtn = mount.querySelector('.doc-save-btn');
   const revertBtn = mount.querySelector('.doc-revert-btn');
+  const copyBtn = mount.querySelector('.doc-copy-btn');
   const downloadBtn = mount.querySelector('.doc-download-btn');
 
   let lastSavedContent = '';
@@ -81,6 +82,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  async function copyToClipboard(text, flashMessage) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setStatus(flashMessage || 'Copied to clipboard');
+    } catch {
+      setStatus('Could not copy — try selecting the text manually.', true);
+    }
+  }
+
   // ---- Structured view renderer ------------------------------------
 
   function looksLikeHeadingText(line) {
@@ -104,7 +114,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const descEl = document.createElement('span');
     descEl.className = 'doc-row-desc';
     descEl.textContent = desc;
-    row.append(chip, descEl);
+    const copyIcon = document.createElement('button');
+    copyIcon.type = 'button';
+    copyIcon.className = 'doc-row-copy';
+    copyIcon.title = `Copy "${term}"`;
+    copyIcon.innerHTML =
+      '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-6A1.5 1.5 0 0 0 4 4.5v6A1.5 1.5 0 0 0 5.5 12H7"/></svg>';
+    copyIcon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      copyToClipboard(term, `Copied "${term}"`);
+    });
+    row.append(chip, descEl, copyIcon);
     return row;
   }
 
@@ -336,10 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  viewEl.addEventListener('click', () => {
-    if (!editing) enterEditMode();
-  });
-
   if (saveBtn) {
     saveBtn.addEventListener('click', () => {
       clearTimeout(saveTimer);
@@ -349,6 +365,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (revertBtn) {
     revertBtn.addEventListener('click', revert);
+  }
+
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      copyToClipboard(textarea.value, 'Copied whole document');
+    });
+  }
+
+  const printBtn = mount.querySelector('.doc-print-btn');
+  if (printBtn) {
+    printBtn.addEventListener('click', async () => {
+      // Print the formatted view, not the raw textarea — so leave edit
+      // mode (saving anything pending) before opening the print dialog.
+      if (editing) await exitEditMode();
+      window.print();
+    });
   }
 
   if (downloadBtn) {

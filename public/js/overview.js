@@ -41,12 +41,16 @@
   function renderGrid() {
     const grid = document.getElementById('overview-grid');
     if (!grid) return;
+    const icons = window.SECTION_ICONS || {};
     grid.innerHTML = SECTION_ORDER.map((section) => {
       const doc = allDocs.find((d) => d.section === section);
       const preview = doc ? snippetOf(doc.content) : null;
       return `
-        <a class="stat-card" href="/${section}.html">
-          <div class="stat-label">${LABELS[section]}</div>
+        <a class="stat-card section-${section}" href="/${section}.html">
+          <div class="stat-label">
+            <span class="nav-icon-badge section-${section}">${icons[section] || ''}</span>
+            ${LABELS[section]}
+          </div>
           <div class="stat-status"><span class="dot"></span> ${formatTime(doc ? doc.updated_at : null)}</div>
           ${preview ? `<div class="stat-preview">${escapeHtml(preview)}</div>` : ''}
         </a>
@@ -145,6 +149,11 @@
     const exportBtn = document.getElementById('export-all-btn');
     if (exportBtn) {
       exportBtn.addEventListener('click', exportAll);
+    }
+
+    const printBtn = document.getElementById('print-all-btn');
+    if (printBtn) {
+      printBtn.addEventListener('click', () => window.print());
     }
   });
 })();

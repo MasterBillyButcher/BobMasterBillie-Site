@@ -8,11 +8,18 @@
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
+  <header class="mobile-topbar">
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h14M3 10h14M3 14h14" stroke-linecap="round"/></svg>
+    </button>
+    <span class="mobile-brand">BOBMASTERBILLIE</span>
+  </header>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar"></aside>
     <main class="main-content">
       <p class="page-eyebrow">Control room</p>
-      <h1>Dashboard</h1>
+      <h1 data-section="dashboard">Dashboard</h1>
       <p class="text-dim">
         Every section is a simple document you can edit and save — click
         through from the sidebar. Last-edited times below.
@@ -26,6 +33,7 @@
           placeholder="Search across all your notes…"
         />
         <button class="secondary" id="export-all-btn">Export all as .txt</button>
+        <button class="secondary" id="print-all-btn">Print</button>
       </div>
 
       <div id="search-results"></div>
@@ -33,7 +41,10 @@
     </main>
   </div>
   <script src="/js/csrf.js"></script>
+  <script src="/js/icons.js"></script>
+  <script src="/js/pins.js"></script>
   <script src="/js/nav.js"></script>
+  <script src="/js/shortcuts.js"></script>
   <script src="/js/overview.js"></script>
 </body>
 </html>

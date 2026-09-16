@@ -8,11 +8,18 @@
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
+  <header class="mobile-topbar">
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h14M3 10h14M3 14h14" stroke-linecap="round"/></svg>
+    </button>
+    <span class="mobile-brand">BOBMASTERBILLIE</span>
+  </header>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar"></aside>
     <main class="main-content">
       <p class="page-eyebrow">Control room</p>
-      <h1>Stream Notes</h1>
+      <h1 data-section="notes">Stream Notes</h1>
       <p class="text-dim">Talking points, reminders, anything to have on hand mid-stream.</p>
 
       <div class="doc-editor" data-doc-editor data-section="notes">
@@ -24,6 +31,8 @@
           <div class="doc-toolbar-actions">
             <button class="primary doc-edit-btn" type="button">Edit</button>
             <button class="secondary doc-revert-btn hidden" type="button">Undo last save</button>
+            <button class="secondary doc-copy-btn" type="button">Copy</button>
+            <button class="secondary doc-print-btn" type="button">Print</button>
             <button class="secondary doc-download-btn" type="button">Download</button>
             <button class="secondary doc-save-btn hidden" type="button">Save</button>
           </div>
@@ -34,7 +43,10 @@
     </main>
   </div>
   <script src="/js/csrf.js"></script>
+  <script src="/js/icons.js"></script>
+  <script src="/js/pins.js"></script>
   <script src="/js/nav.js"></script>
+  <script src="/js/shortcuts.js"></script>
   <script src="/js/doc.js"></script>
 </body>
 </html>
