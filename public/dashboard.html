@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Dashboard — BobMasterBillie</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="mobile-topbar">
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h14M3 10h14M3 14h14" stroke-linecap="round"/></svg>
+    </button>
+    <span class="mobile-brand">BOBMASTERBILLIE</span>
+  </header>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+
+      <div class="dash-hero">
+        <div>
+          <p class="page-eyebrow">Control room</p>
+          <h1 class="dash-hero-title">Welcome back</h1>
+          <p class="text-dim" id="dash-subtitle">Loading overview…</p>
+        </div>
+        <div class="dash-clock" id="dash-clock">
+          <div class="dash-clock-time" id="dash-clock-time">--:--</div>
+          <div class="dash-clock-date" id="dash-clock-date">—</div>
+        </div>
+      </div>
+
+      <div class="dash-stats" id="dash-stats"></div>
+
+      <div id="dash-pinned-row"></div>
+
+      <div class="dash-columns">
+        <section class="dash-main-col">
+          <div class="overview-toolbar">
+            <input
+              type="search"
+              id="overview-search"
+              class="overview-search-input"
+              placeholder="Search across all your notes…"
+            />
+            <button class="secondary" id="export-all-btn">Export all as .txt</button>
+            <button class="secondary" id="print-all-btn">Print</button>
+          </div>
+
+          <div id="search-results"></div>
+          <div class="stat-grid" id="overview-grid"></div>
+        </section>
+
+        <aside class="dash-side-col">
+          <div class="dash-panel">
+            <h2 class="dash-panel-title">Recent activity</h2>
+            <div id="recent-activity"></div>
+          </div>
+        </aside>
+      </div>
+
+    </main>
+  </div>
+  <script src="/js/csrf.js"></script>
+  <script src="/js/icons.js"></script>
+  <script src="/js/pins.js"></script>
+  <script src="/js/nav.js"></script>
+  <script src="/js/shortcuts.js"></script>
+  <script src="/js/overview.js"></script>
+</body>
+</html>
