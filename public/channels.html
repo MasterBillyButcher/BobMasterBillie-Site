@@ -22,6 +22,24 @@
       <h1 data-section="channels">Channels</h1>
       <p class="text-dim">Other channels you raid, host, or keep an eye on.</p>
 
+      <div class="live-status-note">
+        <strong>About live status:</strong> automatically showing who's
+        live, for how long, and viewer counts would need real API
+        credentials from Twitch, YouTube, and Kick's own developer
+        consoles — those can't be faked with placeholder data. Add
+        channels below for now; live tracking can be wired in later once
+        you have API keys for each platform.
+      </div>
+
+      <div
+        class="quick-add"
+        data-quick-add
+        data-section="channels"
+        data-template="{name} ({platform}) → {url}"
+        data-fields='[{"key":"name","label":"Channel name","placeholder":"e.g. someuser","required":true},{"key":"platform","label":"Platform","type":"select","options":["Twitch","YouTube","Kick"]},{"key":"url","label":"Channel URL","type":"url","placeholder":"https://twitch.tv/someuser","required":true}]'
+        data-button-text="Add channel"
+      ></div>
+
       <div class="doc-editor" data-doc-editor data-section="channels">
         <div class="doc-toolbar">
           <div class="doc-toolbar-left">
@@ -38,7 +56,7 @@
           </div>
         </div>
         <div class="doc-view"></div>
-        <textarea class="doc-textarea hidden" placeholder="Channel name, why, link..." spellcheck="true"></textarea>
+        <textarea class="doc-textarea hidden" placeholder="Start typing..." spellcheck="true"></textarea>
       </div>
     </main>
   </div>
@@ -47,6 +65,7 @@
   <script src="/js/pins.js"></script>
   <script src="/js/nav.js"></script>
   <script src="/js/shortcuts.js"></script>
+  <script src="/js/quick-add.js"></script>
   <script src="/js/doc.js"></script>
 </body>
 </html>

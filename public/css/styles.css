@@ -289,6 +289,7 @@ svg {
 }
 
 .field input,
+.field select,
 .field textarea {
   width: 100%;
   padding: 11px 13px;
@@ -308,6 +309,7 @@ svg {
 }
 
 .field input:focus,
+.field select:focus,
 .field textarea:focus {
   outline: none;
   border-color: var(--accent);
@@ -686,6 +688,20 @@ a.stat-card:hover {
   font-size: 0.82rem;
   color: var(--text-dim);
   line-height: 1.45;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat-preview-count {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-faint);
 }
 
 /* ---------------------------------------------------------------------
@@ -883,6 +899,105 @@ a.stat-card:hover {
   color: var(--text-faint);
   font-style: italic;
 }
+
+/* ---------------------------------------------------------------------
+   Quick-add form (Backlog, Veto Power, Channels)
+   ------------------------------------------------------------------- */
+
+.live-status-note {
+  background: var(--surface-1);
+  border: 1px solid var(--panel-border);
+  border-left: 3px solid var(--warn);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.live-status-note strong {
+  color: var(--text);
+}
+
+/* ---------------------------------------------------------------------
+   Notebook style (Stream Notes)
+   ------------------------------------------------------------------- */
+
+.notebook-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.notebook-toolbar .primary {
+  width: auto;
+  padding: 10px 20px;
+}
+
+.notebook-hint {
+  font-size: 0.82rem;
+}
+
+.notebook-style .doc-view,
+.notebook-style .doc-textarea {
+  background-image:
+    linear-gradient(var(--panel) 0px, var(--panel) 27px, var(--panel-border-soft) 28px),
+    linear-gradient(90deg, transparent 46px, rgba(244, 63, 94, 0.18) 47px, rgba(244, 63, 94, 0.18) 48px, transparent 49px);
+  background-size: 100% 28px, 100% 100%;
+  background-position: 0 6px, 0 0;
+  padding-left: 64px;
+}
+
+.notebook-style .doc-view .doc-heading-main {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.quick-add {
+  margin-bottom: 24px;
+  max-width: 100%;
+}
+
+.quick-add-form {
+  background: var(--surface-1);
+  border: 1px dashed var(--panel-border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+
+.quick-add-fields {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.quick-add-field {
+  flex: 1 1 180px;
+  margin-bottom: 0;
+}
+
+.quick-add-submit {
+  width: auto;
+  padding: 10px 20px;
+  margin-top: 10px;
+}
+
+@media (max-width: 860px) {
+  .quick-add-fields {
+    flex-direction: column;
+  }
+
+  .quick-add-submit {
+    width: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Settings / info panels
    ------------------------------------------------------------------- */
 
 .settings-section {
@@ -1017,7 +1132,7 @@ a.stat-card:hover {
   cursor: text;
   user-select: text;
   -webkit-user-select: text;
-  columns: 380px 3;
+  columns: 420px 2;
   column-gap: 48px;
 }
 
@@ -1098,9 +1213,9 @@ a.stat-card:hover {
 
 .doc-row {
   display: flex;
-  align-items: baseline;
-  gap: 12px;
-  padding: 6px 0;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
@@ -1108,22 +1223,30 @@ a.stat-card:hover {
   border-bottom: none;
 }
 
+.doc-row-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .doc-chip {
-  flex-shrink: 0;
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: break-word;
   font-family: var(--mono);
   font-size: 0.84rem;
   color: var(--accent);
   background: var(--accent-soft);
   border-radius: 5px;
   padding: 2px 8px;
-  white-space: nowrap;
 }
 
 .doc-row-desc {
-  flex: 1;
   color: var(--text-dim);
-  font-size: 0.9rem;
-  word-break: break-word;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 .doc-row-copy {

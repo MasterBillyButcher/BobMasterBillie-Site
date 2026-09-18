@@ -22,6 +22,15 @@
       <h1 data-section="backlog">Backlog</h1>
       <p class="text-dim">Games, topics, and ideas queued up for future streams.</p>
 
+      <div
+        class="quick-add"
+        data-quick-add
+        data-section="backlog"
+        data-template="• {name}"
+        data-fields='[{"key": "name", "label": "Movie / show name", "placeholder": "e.g. Stranger Things", "required": true}]'
+        data-button-text="Add to backlog"
+      ></div>
+
       <div class="doc-editor" data-doc-editor data-section="backlog">
         <div class="doc-toolbar">
           <div class="doc-toolbar-left">
@@ -47,6 +56,7 @@
   <script src="/js/pins.js"></script>
   <script src="/js/nav.js"></script>
   <script src="/js/shortcuts.js"></script>
+  <script src="/js/quick-add.js"></script>
   <script src="/js/doc.js"></script>
 </body>
 </html>

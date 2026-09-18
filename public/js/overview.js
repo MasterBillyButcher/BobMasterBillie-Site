@@ -45,10 +45,16 @@
     return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   }
 
-  function snippetOf(content) {
+  function summaryOf(content) {
     if (!content || !content.trim()) return null;
-    const flat = content.replace(/\s+/g, ' ').trim();
-    return flat.length > 90 ? flat.slice(0, 90) + '…' : flat;
+    const firstLine = content
+      .split('\n')
+      .map((l) => l.trim())
+      .find((l) => l.length > 0);
+    if (!firstLine) return null;
+    const clean = firstLine.length > 70 ? firstLine.slice(0, 70) + '…' : firstLine;
+    const wordCount = countWords(content);
+    return { clean, wordCount };
   }
 
   function countWords(text) {
@@ -176,7 +182,7 @@
     const icons = window.SECTION_ICONS || {};
     grid.innerHTML = SECTION_ORDER.map((section) => {
       const doc = allDocs.find((d) => d.section === section);
-      const preview = doc ? snippetOf(doc.content) : null;
+      const summary = doc ? summaryOf(doc.content) : null;
       return `
         <a class="stat-card section-${section}" href="/${section}.html">
           <div class="stat-label">
@@ -184,7 +190,7 @@
             ${LABELS[section]}
           </div>
           <div class="stat-status"><span class="dot"></span> ${formatTime(doc ? doc.updated_at : null)}</div>
-          ${preview ? `<div class="stat-preview">${escapeHtml(preview)}</div>` : ''}
+          ${summary ? `<div class="stat-preview">${escapeHtml(summary.clean)}<span class="stat-preview-count">${summary.wordCount} word${summary.wordCount === 1 ? '' : 's'}</span></div>` : ''}
         </a>
       `;
     }).join('');

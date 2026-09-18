@@ -51,13 +51,34 @@ document.addEventListener('DOMContentLoaded', () => {
     return el;
   }
 
+  function countItems(content) {
+    const blocks = content.split(/\n\s*\n/);
+    let count = 0;
+    blocks.forEach((block) => {
+      const lines = block.split('\n').filter((l) => l.trim() !== '');
+      if (lines.length === 0) return;
+      const skipHeading =
+        (lines.length === 1 && looksLikeHeadingText(lines[0])) ||
+        (lines.length > 1 &&
+          looksLikeHeadingText(lines[0]) &&
+          blockBodyLooksStructured(lines.slice(1)));
+      const bodyLines = skipHeading ? lines.slice(1) : lines;
+      count += bodyLines.length;
+    });
+    return count;
+  }
+
   function updateCounters() {
     if (!countersEl) return;
     const words = countWords(textarea.value);
     const chars = textarea.value.length;
     const readMins = words === 0 ? 0 : Math.max(1, Math.round(words / 200));
+    const items = countItems(textarea.value);
 
     countersEl.innerHTML = '';
+    if (items > 0) {
+      countersEl.appendChild(badge(`${items} item${items === 1 ? '' : 's'}`));
+    }
     countersEl.appendChild(badge(`${words} word${words === 1 ? '' : 's'}`));
     countersEl.appendChild(badge(`${chars} char${chars === 1 ? '' : 's'}`));
     if (readMins > 0) {
@@ -120,25 +141,50 @@ document.addEventListener('DOMContentLoaded', () => {
     if (t.includes('→')) return false;
     if (/^[•\-]\s/.test(t)) return false;
     if (/^\d+\.\s/.test(t)) return false;
+    // Titles don't end in sentence punctuation — "Hey [Server Name]! 👋"
+    // is a greeting, not a heading, even though it's short. Strip any
+    // trailing emoji/whitespace first so the punctuation check looks at
+    // the actual last word, not a trailing wave emoji.
+    const core = t.replace(/[\p{Extended_Pictographic}\uFE0F\u200D\s]+$/gu, '');
+    if (/[.!?]$/.test(core)) return false;
     return true;
+  }
+
+  /**
+   * A multi-line block only gets its first line promoted to a
+   * sub-heading when the REST of the block is clearly a structured
+   * list (arrow rows or bulleted/numbered lines). Without this check,
+   * a block of plain peer lines (e.g. three emoji-prefixed entries with
+   * no bullet character) would wrongly treat the first entry as a
+   * heading and color it differently from the rest — exactly the kind
+   * of "why is only the first line teal" bug this guards against.
+   */
+  function blockBodyLooksStructured(lines) {
+    return lines.some((l) => {
+      const t = l.trim();
+      return t.includes('→') || /^[•\-]\s/.test(t) || /^\d+\.\s/.test(t);
+    });
   }
 
   function renderArrowRow(line) {
     const idx = line.indexOf('→');
     const term = line.slice(0, idx).trim();
     const desc = line.slice(idx + 1).trim();
+
     const row = document.createElement('div');
     row.className = 'doc-row';
+
+    const top = document.createElement('div');
+    top.className = 'doc-row-top';
+
     const chip = document.createElement('span');
     chip.className = 'doc-chip';
     chip.textContent = term;
-    const descEl = document.createElement('span');
-    descEl.className = 'doc-row-desc';
-    descEl.textContent = desc;
+
+    const copyValue = stripLeadingDecoration(term);
     const copyIcon = document.createElement('button');
     copyIcon.type = 'button';
     copyIcon.className = 'doc-row-copy';
-    const copyValue = stripLeadingDecoration(term);
     copyIcon.title = `Copy "${copyValue}"`;
     copyIcon.innerHTML =
       '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-6A1.5 1.5 0 0 0 4 4.5v6A1.5 1.5 0 0 0 5.5 12H7"/></svg>';
@@ -146,7 +192,14 @@ document.addEventListener('DOMContentLoaded', () => {
       e.stopPropagation();
       copyToClipboard(copyValue, `Copied "${copyValue}"`);
     });
-    row.append(chip, descEl, copyIcon);
+
+    top.append(chip, copyIcon);
+
+    const descEl = document.createElement('div');
+    descEl.className = 'doc-row-desc';
+    descEl.textContent = desc;
+
+    row.append(top, descEl);
     return row;
   }
 
@@ -191,7 +244,11 @@ document.addEventListener('DOMContentLoaded', () => {
         heading.textContent = lines[0].trim();
         blockEl.appendChild(heading);
         startIdx = 1;
-      } else if (lines.length > 1 && looksLikeHeadingText(lines[0])) {
+      } else if (
+        lines.length > 1 &&
+        looksLikeHeadingText(lines[0]) &&
+        blockBodyLooksStructured(lines.slice(1))
+      ) {
         const heading = document.createElement('div');
         heading.className = 'doc-heading';
         heading.textContent = lines[0].trim();

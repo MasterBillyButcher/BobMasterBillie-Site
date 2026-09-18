@@ -55,6 +55,52 @@ There's no structured fields, no add/edit/delete forms, no per-item
 anything — just type, and it saves. Exactly like using a Word doc to
 jot things down, just in the browser and organized by section.
 
+### Fixed this round
+
+- **Column layout was breaking text mid-word** — long command names
+  (like `/monitor [user] / /unmonitor [user]`) squeezed the description
+  text into almost no space in the multi-column view, forcing severe
+  character-by-character wrapping. Fixed by stacking each command's name
+  and description vertically instead of side-by-side, and reduced to a
+  calmer 2-column max layout.
+- **False heading coloring** — a block of peer list items with no bullet
+  characters (like Veto Power's entries) had its first line wrongly
+  promoted to a colored sub-heading while the rest stayed plain. Fixed:
+  a line is now only promoted to a heading when the rest of its block
+  actually looks like a structured list (bullets or arrow rows).
+- **Short sentences treated as titles** — a greeting like "Hey [Server
+  Name]!" was rendered as a big heading just because it was short, same
+  as a real title. Fixed: lines ending in `.`/`!`/`?` are never treated
+  as headings, since real titles don't end in sentence punctuation.
+- **Dashboard card previews were a jumbled wall of text** — now shows
+  the document's first line plus a word count, instead of every line
+  flattened into one run-on string.
+
+### Quick-add forms (Backlog, Veto Power, Channels)
+
+These three pages now have a small form above the document that appends
+a new line and saves — no need to open Edit mode just to add one thing:
+
+- **Backlog** — movie/show name → adds as a bullet.
+- **Veto Power** — name + optional reason → adds as an entry.
+- **Channels** — channel name, platform (Twitch/YouTube/Kick), and URL
+  → adds as a command-style row (chip + link). **Live status, duration,
+  and viewer counts aren't included** — that needs real API credentials
+  from each platform's own developer console, which can't be faked with
+  placeholder data. The page says as much rather than showing fake data.
+
+Every page's item count (shown in the counter badges) comes from the
+same block-parsing logic as the structured view, so Backlog and Veto
+Power automatically show how many entries they have — no separate
+counter to maintain.
+
+### Stream Notes: journal style
+
+A "New entry" button prepends a dated heading to the top of the page,
+most recent first, so it behaves like an actual running notebook instead
+of one undifferentiated block of text. The page also gets a subtle
+ruled-paper background with a margin line.
+
 ### Fonts
 
 Self-hosted under `public/fonts/` — all six are SIL Open Font License

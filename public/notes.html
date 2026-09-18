@@ -22,7 +22,12 @@
       <h1 data-section="notes">Stream Notes</h1>
       <p class="text-dim">Talking points, reminders, anything to have on hand mid-stream.</p>
 
-      <div class="doc-editor" data-doc-editor data-section="notes">
+      <div class="notebook-toolbar">
+        <button class="primary" id="new-entry-btn" type="button">New entry</button>
+        <span class="text-dim notebook-hint">Adds a dated entry at the top, most recent first.</span>
+      </div>
+
+      <div class="doc-editor notebook-style" data-doc-editor data-section="notes">
         <div class="doc-toolbar">
           <div class="doc-toolbar-left">
             <span class="doc-status">Loading…</span>
@@ -47,6 +52,7 @@
   <script src="/js/pins.js"></script>
   <script src="/js/nav.js"></script>
   <script src="/js/shortcuts.js"></script>
+  <script src="/js/notebook.js"></script>
   <script src="/js/doc.js"></script>
 </body>
 </html>
