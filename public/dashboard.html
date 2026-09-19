@@ -22,7 +22,7 @@
       <div class="dash-hero">
         <div>
           <p class="page-eyebrow">Control room</p>
-          <h1 class="dash-hero-title">Welcome back</h1>
+          <h1 class="dash-hero-title" id="dash-greeting">Welcome back</h1>
           <p class="text-dim" id="dash-subtitle">Loading overview…</p>
         </div>
         <div class="dash-clock" id="dash-clock">
@@ -53,10 +53,14 @@
         </section>
 
         <aside class="dash-side-col">
+          <div class="dash-panel" id="continue-panel"></div>
+
           <div class="dash-panel">
             <h2 class="dash-panel-title">Recent activity</h2>
             <div id="recent-activity"></div>
           </div>
+
+          <div class="dash-panel" id="attention-panel"></div>
         </aside>
       </div>
 

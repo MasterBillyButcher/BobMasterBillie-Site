@@ -64,6 +64,14 @@
 
   // ---- Hero / clock -------------------------------------------------
 
+  function renderGreeting() {
+    const el = document.getElementById('dash-greeting');
+    if (!el) return;
+    const hour = new Date().getHours();
+    const greeting = hour < 5 ? 'Still up?' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    el.textContent = greeting;
+  }
+
   function startClock() {
     const timeEl = document.getElementById('dash-clock-time');
     const dateEl = document.getElementById('dash-clock-date');
@@ -269,11 +277,71 @@
 
   // ---- Init --------------------------------------------------------------
 
+  // ---- Continue editing / needs attention -----------------------------
+
+  function renderContinuePanel() {
+    const el = document.getElementById('continue-panel');
+    if (!el) return;
+
+    const mostRecent = allDocs
+      .filter((d) => d.updated_at)
+      .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0];
+
+    if (!mostRecent) {
+      el.innerHTML = '';
+      return;
+    }
+
+    const icons = window.SECTION_ICONS || {};
+    el.innerHTML = `
+      <h2 class="dash-panel-title">Continue editing</h2>
+      <a class="continue-card section-${mostRecent.section}" href="/${mostRecent.section}.html">
+        <span class="nav-icon-badge section-${mostRecent.section}">${icons[mostRecent.section] || ''}</span>
+        <span>
+          <div class="continue-card-label">${escapeHtml(LABELS[mostRecent.section] || mostRecent.section)}</div>
+          <div class="continue-card-time">${relativeTime(mostRecent.updated_at)}</div>
+        </span>
+      </a>
+    `;
+  }
+
+  function renderAttentionPanel() {
+    const el = document.getElementById('attention-panel');
+    if (!el) return;
+
+    const empty = SECTION_ORDER.filter((section) => {
+      const doc = allDocs.find((d) => d.section === section);
+      return !doc || !doc.content || !doc.content.trim();
+    });
+
+    if (empty.length === 0) {
+      el.innerHTML = '';
+      return;
+    }
+
+    el.innerHTML = `
+      <h2 class="dash-panel-title">Needs attention</h2>
+      <div class="attention-list">
+        ${empty
+          .map(
+            (section) => `
+          <a class="attention-item section-${section}" href="/${section}.html">
+            <span class="activity-dot"></span>
+            ${escapeHtml(LABELS[section] || section)}
+          </a>`
+          )
+          .join('')}
+      </div>
+    `;
+  }
+
   function renderAll() {
     renderStats();
     renderGrid();
     renderActivity();
     renderPinnedRow();
+    renderContinuePanel();
+    renderAttentionPanel();
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -281,6 +349,7 @@
     if (!grid) return; // not the dashboard page
 
     startClock();
+    renderGreeting();
 
     fetch('/api/docs?full=1', { headers: csrfHeaders() })
       .then((res) => (res.ok ? res.json() : Promise.reject()))

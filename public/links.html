@@ -22,6 +22,15 @@
       <h1 data-section="links">Quick Links</h1>
       <p class="text-dim">Bookmarks and links you reach for constantly.</p>
 
+      <div
+        class="quick-add"
+        data-quick-add
+        data-section="links"
+        data-template="{label} → {url}"
+        data-fields='[{"key": "label", "label": "Label", "placeholder": "e.g. Overlay editor", "required": true}, {"key": "url", "label": "URL", "type": "url", "placeholder": "https://...", "required": true}]'
+        data-button-text="Add link"
+      ></div>
+
       <div class="doc-editor" data-doc-editor data-section="links">
         <div class="doc-toolbar">
           <div class="doc-toolbar-left">
@@ -47,6 +56,7 @@
   <script src="/js/pins.js"></script>
   <script src="/js/nav.js"></script>
   <script src="/js/shortcuts.js"></script>
+  <script src="/js/quick-add.js"></script>
   <script src="/js/doc.js"></script>
 </body>
 </html>

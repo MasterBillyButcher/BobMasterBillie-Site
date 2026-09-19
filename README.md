@@ -55,7 +55,39 @@ There's no structured fields, no add/edit/delete forms, no per-item
 anything — just type, and it saves. Exactly like using a Word doc to
 jot things down, just in the browser and organized by section.
 
+### More quick-add forms
+
+Same pattern as Backlog/Veto Power/Channels, now also on:
+
+- **Custom Commands** — command + response.
+- **Predictions** — a single prediction text field, added as a bullet.
+- **Quick Links** — label + URL.
+
+### Dashboard: more panels
+
+- **Time-based greeting** — "Good morning"/"afternoon"/"evening" (or
+  "Still up?" after midnight) instead of a static "Welcome back".
+- **Continue editing** — a card linking straight to whichever section
+  you touched most recently.
+- **Needs attention** — a quick list of every section that's still
+  empty, so gaps are obvious at a glance instead of having to scan the
+  whole grid.
+
+### Visual polish
+
+- Content blocks, cards, and activity items now fade/lift in on load
+  with a short staggered animation instead of popping in instantly
+  (respects reduced-motion settings).
+- Secondary buttons get the same press-down feedback primary buttons
+  already had.
+
 ### Fixed this round
+
+- **Edit mode looked like one big code block** — the textarea was set to
+  a monospace font everywhere, which made sense for command-heavy pages
+  but made prose pages like CV and Stream Notes feel like you were
+  writing code. Reverted to the normal readable font (same as the
+  formatted view) across every page.
 
 - **Column layout was breaking text mid-word** — long command names
   (like `/monitor [user] / /unmonitor [user]`) squeezed the description
