@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import { VipMember, VipEvent } from '@/lib/types'
-import { useData, timeAgo } from '@/hooks/use-data'
+import { useData, timeAgo, copyText } from '@/hooks/use-data'
+import { TWITCH_TITLE_MAX, TWITCH_OPTION_MAX } from '@/lib/prediction-format'
+import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -36,6 +38,10 @@ import {
   ShieldAlert,
   ShieldX,
   RotateCcw,
+  Vote,
+  Copy,
+  Check,
+  Save,
 } from 'lucide-react'
 
 const statusMeta: Record<VipMember['status'], { label: string; className: string }> = {
@@ -83,6 +89,72 @@ export default function VipBoard() {
   const [eventType, setEventType] = useState('granted')
   const [eventNote, setEventNote] = useState('')
   const [eventSubmitting, setEventSubmitting] = useState(false)
+
+  // VIP prediction - Twitch-ready setup about a member's VIP fate
+  const [predUser, setPredUser] = useState('')
+  const [predTitle, setPredTitle] = useState('')
+  const [predOpt1, setPredOpt1] = useState('Yes, VIP back')
+  const [predOpt2, setPredOpt2] = useState('No, stays off')
+  const [predDuration, setPredDuration] = useState('1 day')
+  const [predCopied, setPredCopied] = useState(false)
+  const [predSaving, setPredSaving] = useState(false)
+
+  const predSetup = [
+    '/prediction',
+    `Title: ${predTitle || '...'}`,
+    `Option 1: ${predOpt1 || '...'}`,
+    `Option 2: ${predOpt2 || '...'}`,
+    `Duration: ${predDuration || '...'}`,
+  ].join('\n')
+
+  function suggestTitle(name: string, memberStatus?: string): string {
+    const u = name ? `@${name}` : '@user'
+    if (memberStatus === 'probation') return `Will ${u} earn VIP back?`
+    if (memberStatus === 'active') return `Will ${u} keep VIP this month?`
+    return `Will ${u} get VIP this month?`
+  }
+
+  function pickPredUser(name: string, memberStatus?: string) {
+    setPredUser(name)
+    setPredTitle(suggestTitle(name, memberStatus))
+  }
+
+  async function copyPred() {
+    const ok = await copyText(predSetup)
+    if (ok) {
+      setPredCopied(true)
+      toast({ title: 'VIP prediction setup copied', description: 'Paste it into Twitch.' })
+      setTimeout(() => setPredCopied(false), 1600)
+    } else {
+      toast({ title: 'Copy failed', variant: 'destructive' })
+    }
+  }
+
+  async function savePred() {
+    if (!predTitle.trim()) {
+      toast({ title: 'Prediction title is required', variant: 'destructive' })
+      return
+    }
+    setPredSaving(true)
+    try {
+      const res = await fetch('/api/predictions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: predTitle,
+          options: [predOpt1 || 'Yes', predOpt2 || 'No'],
+          duration: predDuration || '1 day',
+          category: 'custom',
+        }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      toast({ title: 'Saved to the Predictions board' })
+    } catch {
+      toast({ title: 'Could not save prediction', variant: 'destructive' })
+    } finally {
+      setPredSaving(false)
+    }
+  }
 
   async function addMember() {
     if (!username.trim()) {
@@ -298,6 +370,167 @@ export default function VipBoard() {
           </Dialog>
         </div>
       </div>
+
+      {/* VIP Prediction - ready-to-start Twitch setup about a member's VIP fate */}
+      <Card>
+        <CardContent className="space-y-4 p-5">
+          <div className="flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15">
+              <Vote className="h-4 w-4 text-primary" aria-hidden />
+            </span>
+            <div>
+              <h3 className="font-semibold leading-tight">VIP Prediction</h3>
+              <p className="text-xs text-muted-foreground">
+                A ready-to-start Twitch prediction about a member&apos;s VIP fate. Only the
+                command, title and options - nothing extra.
+              </p>
+            </div>
+          </div>
+
+          {(members ?? []).length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {(members ?? []).map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => pickPredUser(m.username, m.status)}
+                  className={cn(
+                    'rounded-md border px-2.5 py-1 text-xs transition-colors',
+                    predUser === m.username
+                      ? 'border-primary/60 bg-primary/10 text-primary'
+                      : 'border-border bg-secondary/40 text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  @{m.username}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="vip-pred-user">Username</Label>
+                <Input
+                  id="vip-pred-user"
+                  value={predUser}
+                  onChange={(e) => {
+                    const name = e.target.value
+                    setPredUser(name)
+                    // keep the suggested question in sync while the title still looks auto-generated
+                    if (!predTitle || /^Will @.*\?$/.test(predTitle)) {
+                      setPredTitle(suggestTitle(name))
+                    }
+                  }}
+                  placeholder="e.g. mickey_17__"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="vip-pred-title">
+                  Prediction title{' '}
+                  <span
+                    className={cn(
+                      'ml-1 text-xs tabular-nums',
+                      predTitle.length > TWITCH_TITLE_MAX ? 'text-red-400' : 'text-muted-foreground'
+                    )}
+                  >
+                    {predTitle.length}/{TWITCH_TITLE_MAX}
+                  </span>
+                </Label>
+                <Input
+                  id="vip-pred-title"
+                  value={predTitle}
+                  onChange={(e) => setPredTitle(e.target.value)}
+                  placeholder="Will @user earn VIP back?"
+                  maxLength={80}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="vip-pred-o1">
+                    Option 1{' '}
+                    <span
+                      className={cn(
+                        'ml-1 text-xs tabular-nums',
+                        predOpt1.length > TWITCH_OPTION_MAX ? 'text-red-400' : 'text-muted-foreground'
+                      )}
+                    >
+                      {predOpt1.length}/{TWITCH_OPTION_MAX}
+                    </span>
+                  </Label>
+                  <Input
+                    id="vip-pred-o1"
+                    value={predOpt1}
+                    onChange={(e) => setPredOpt1(e.target.value)}
+                    maxLength={25}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="vip-pred-o2">
+                    Option 2{' '}
+                    <span
+                      className={cn(
+                        'ml-1 text-xs tabular-nums',
+                        predOpt2.length > TWITCH_OPTION_MAX ? 'text-red-400' : 'text-muted-foreground'
+                      )}
+                    >
+                      {predOpt2.length}/{TWITCH_OPTION_MAX}
+                    </span>
+                  </Label>
+                  <Input
+                    id="vip-pred-o2"
+                    value={predOpt2}
+                    onChange={(e) => setPredOpt2(e.target.value)}
+                    maxLength={25}
+                  />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="vip-pred-dur">Prediction window</Label>
+                <Input
+                  id="vip-pred-dur"
+                  value={predDuration}
+                  onChange={(e) => setPredDuration(e.target.value)}
+                  placeholder="1 day"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <div className="flex-1 rounded-lg border border-border bg-secondary/40">
+                <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-1.5">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+                    Copy-paste - ready to start
+                  </p>
+                  <Button
+                    size="sm"
+                    className="h-7 gap-1 bg-primary text-primary-foreground"
+                    aria-label="Copy VIP prediction setup"
+                    onClick={copyPred}
+                  >
+                    {predCopied ? (
+                      <Check className="h-3.5 w-3.5" aria-hidden />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5" aria-hidden />
+                    )}
+                    Copy setup
+                  </Button>
+                </div>
+                <pre className="overflow-x-auto whitespace-pre px-3 py-2.5 font-mono text-xs leading-relaxed text-foreground">
+                  {predSetup}
+                </pre>
+              </div>
+              <Button variant="outline" className="gap-2" onClick={savePred} disabled={predSaving}>
+                {predSaving ? 'Saving…' : (
+                  <>
+                    <Save className="h-4 w-4" aria-hidden /> Save to Predictions board
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Members */}
       {loading && members === null ? (

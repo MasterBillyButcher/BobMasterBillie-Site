@@ -106,3 +106,56 @@ Stage Summary:
 - Site is a clean hand-crafted dark UI: Bebas Neue + Inter, charcoal + amber, sharp radii, zero gradients/purple/emoji/em-dashes/pills/fake content
 - Ships favicon + /terms + /privacy linked from footer
 - Repo now 89 files (under the 100 limit), Vercel-safe tsconfig, deploy kit (GitHub -> Supabase -> Vercel) unchanged and accurate
+
+---
+Task ID: 6
+Agent: Main agent (Z.ai)
+Task: User deployed to GitHub + Vercel; add VIP Prediction + Veto Power, wipe ALL setup data (no movie log / no activity shown), help finish Supabase database setup
+
+Work Log:
+- VIP Prediction added to VIP Board: username input auto-suggests the question ("Will @user earn VIP back?" for probation / "keep VIP" for active / "get VIP" default, kept in sync while title still looks auto-generated), member quick-pick chips, Twitch char counters (title 45, options 25), live ready-to-start block (/prediction + Title + Option 1 + Option 2 + Duration, nothing extra), Copy setup + Save to Predictions board (POSTs /api/predictions, auto-logged)
+- Data wipe: local SQLite force-reset via prisma db push --force-reset; scripts/seed.ts rewritten to CLEAR ALL tables and insert nothing (site starts empty by design)
+- supabase/seed.sql replaced with intentionally-empty file (SELECT 1 + comments); new supabase/clear-data.sql = TRUNCATE of all 8 tables for wiping already-deployed Supabase data once
+- New /api/health: DB connectivity check returning per-table counts (all 0 on clean start) + error hint if DATABASE_URL/init.sql missing
+- README: Step 1 now says do NOT run seed.sql, run clear-data.sql once if old setup data shows; new Step 3.5 "Verify the database connection" via /api/health; features table mentions VIP Prediction; local dev section updated (seed.ts = clean reset); project structure lists new files
+- Verified end to end in browser: dashboard fully empty (Backlog 0, no announcements, no setup logs), VIP Prediction typed mickey_17__ -> title auto-suggested -> saved to Predictions -> appeared with copy block -> auto-logged; then deleted prediction + test logs via API, health shows all counts 0; tsc clean, zero console errors, no em dashes/emoji in new files
+- File count: 91 (under 100); new files: src/app/api/health/route.ts, supabase/clear-data.sql
+
+Stage Summary:
+- Veto Power and Predictions were already separate tabs; VIP Prediction now completes the VIP module (user request "add the vip prediction and vetopower")
+- Site + deploy kit now start 100% clean: no setup movies, no setup activity logs anywhere (local SQLite, seed.ts, seed.sql); user adds everything in-app after deploy
+- User's live Supabase cleanup path: run supabase/clear-data.sql once in SQL Editor, then verify at /api/health; push updated repo to GitHub to auto-redeploy the VIP Prediction feature
+
+---
+Task ID: 7
+Agent: Main agent (Z.ai)
+Task: Correction - keep real people data (Lolwazi + Chadboy_hz veto contenders, mickey_17__ VIP probation), only setup LOGS stay removed; help link Vercel to Supabase
+
+Work Log:
+- Clarified user intent: previous full wipe (Task 6) removed too much; the docx people data IS wanted in the DB, only the fake setup activity logs / demo movies / demo announcements are not
+- scripts/seed.ts rewritten: clears everything, then seeds ONLY 2 vetoes (Lolwazi, Chadboy_hz, 0 rights) + 1 VIP member (mickey_17__, probation, "Gets one more chance to earn VIP back."); zero ActivityLog entries
+- supabase/seed.sql rewritten with same minimal data, fixed ids (veto_lolwazi, veto_chadboy_hz, vip_mickey_17__) + ON CONFLICT DO NOTHING so it is idempotent and safe to re-run
+- README Step 1 updated: run init.sql, then seed.sql (people data only), clear-data.sql first only if old demo data was seeded
+- Local run verified: /api/vetoes = Lolwazi + Chadboy_hz, /api/vips = mickey_17__ probation, /api/logs = [], /api/movies = [], health counts vetoes:2 vipMembers:1 rest 0
+- Browser verified: Veto Power tab shows both contender cards with +/- rights; VIP Board shows mickey_17__ "One more chance" badge + @mickey_17__ quick chip in VIP Prediction; Activity Log empty; zero page errors
+
+Stage Summary:
+- Final data policy: DB starts with the 3 real people (2 veto contenders + 1 VIP probation), nothing else; Activity Log empty until user acts in-app
+- User's Supabase setup path: init.sql -> (clear-data.sql if old demo data present) -> seed.sql -> DATABASE_URL (pooled 6543 + pgbouncer) into Vercel env vars -> redeploy -> verify /api/health shows vetoes:2 vipMembers:1
+
+---
+Task ID: 8
+Agent: Main agent (Z.ai)
+Task: Make the site work with the Supabase x Vercel integration env vars + admin password lock (site read-only until password entered)
+
+Work Log:
+- db.ts rewritten: resolveDatabaseUrl() chain DATABASE_URL -> POSTGRES_PRISMA_URL -> POSTGRES_URL -> file: fallback; auto-appends pgbouncer=true & connection_limit=1 for postgres URLs; query logging scoped to dev. Integration-only setups now connect with zero manual env vars
+- Admin lock added: src/middleware.ts guards all non-GET /api/* (exempt /api/admin/*), compares admin_key cookie to ADMIN_PASSWORD env; not-configured = allow in dev, 401 in production; src/app/api/admin/login/route.ts POST sets admin_key cookie 30d / DELETE clears; src/components/center/admin-gate.tsx = header Locked/Unlocked chip + password dialog + amber read-only banner, module store with useSyncExternalStore; page.tsx integrates both
+- Cookie encoding fixed to single-encode (Next auto-encodes, req.cookies auto-decodes); verified no double-encode
+- .env: ADMIN_PASSWORD set locally (git-ignored); .env.example documents the chain + ADMIN_PASSWORD; README Step 3 now covers integration path (POSTGRES_PRISMA_URL) and the ADMIN_PASSWORD variable
+- Verified end to end: curl mutation w/o cookie 401; wrong password 401; correct password 200+cookie; mutation with cookie 201; GETs open; UI wrong-password toast, unlock toast, chip flips to Unlocked, one-tap +1 works unlocked; after DELETE lock, mutation 401 again; test veto/event/log cleaned; health shows pristine 2 vetoes 1 VIP 0 logs; tsc clean
+- File count 94 (under 100)
+
+Stage Summary:
+- Site connects to Supabase via the integration's own POSTGRES_PRISMA_URL (no DATABASE_URL needed) and is password-locked for edits via ADMIN_PASSWORD; viewing always public
+- User needs: add ADMIN_PASSWORD in Vercel, push code to GitHub, redeploy; then unlock in the UI with the password to edit

@@ -20,6 +20,7 @@ import MoviePlanner from '@/components/center/movie-planner'
 import CommandsReference from '@/components/center/commands-reference'
 import CvTemplates from '@/components/center/cv-templates'
 import ActivityLogView from '@/components/center/activity-log-view'
+import { AdminGate, AdminBanner } from '@/components/center/admin-gate'
 import { cn } from '@/lib/utils'
 import type { TabId } from '@/components/center/tab-types'
 
@@ -53,10 +54,15 @@ export default function Home() {
               <p className="text-xs text-muted-foreground">Command Center</p>
             </div>
           </div>
-          <p className="hidden text-xs text-muted-foreground sm:block">
-            Prediction setups, backlog counter, vetoes, movie nights and the full log
-          </p>
+          <div className="flex items-center gap-3">
+            <p className="hidden text-xs text-muted-foreground sm:block">
+              Prediction setups, backlog counter, vetoes, movie nights and the full log
+            </p>
+            <AdminGate />
+          </div>
         </div>
+
+        <AdminBanner />
 
         {/* Tab navigation - underline style, scrollable on mobile */}
         <nav aria-label="Main navigation" className="border-t border-border">
