@@ -1,0 +1,102 @@
+// Postgres schema for production deployment (Vercel + Supabase)
+// Same models as schema.prisma (SQLite local dev) — provider switched to postgresql.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 🎬 Movie planner — planned / watching / watched with calendar dates
+model Movie {
+  id          String    @id @default(cuid())
+  title       String
+  status      String    @default("planned")
+  notes       String?
+  plannedDate DateTime?
+  watchedDate DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// 🗳️ Twitch predictions — copy-paste ready text for channel-point predictions
+model Prediction {
+  id           String    @id @default(cuid())
+  title        String
+  options      String    @default("[\"Yes\",\"No\"]")
+  announceText String?
+  duration     String    @default("5 minutes")
+  category     String    @default("custom")
+  status       String    @default("ready")
+  outcome      String?
+  usedAt       DateTime?
+  pinned       Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// 🚫 Veto Power board — veto rights only (VIP is tracked separately)
+model Veto {
+  id         String   @id @default(cuid())
+  username   String
+  vetoRights Int      @default(0)
+  note       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ⭐ VIP Board — VIP members (separate from veto rights)
+model VipMember {
+  id        String    @id @default(cuid())
+  username  String
+  status    String    @default("active")
+  grantedAt DateTime?
+  note      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// 📅 VIP events — monthly VIP grant/revoke/return history
+model VipEvent {
+  id        String   @id @default(cuid())
+  username  String
+  eventType String
+  month     String
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+// ⚖️ Backlog count ledger — keeps watched vs earned movies balanced
+// +1 = bits goal completed (a movie earned) · −1 = movie watched
+model BacklogEvent {
+  id         String   @id @default(cuid())
+  type       String
+  delta      Int
+  note       String?
+  movieId    String?
+  occurredAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+}
+
+// 📜 Activity Log — every update, every log
+model ActivityLog {
+  id        String   @id @default(cuid())
+  type      String   @default("update")
+  action    String   @default("note")
+  title     String
+  details   String?
+  pinned    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// 📣 Channel announcements
+model Announcement {
+  id        String   @id @default(cuid())
+  message   String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
