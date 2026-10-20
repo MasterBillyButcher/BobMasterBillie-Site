@@ -18,3 +18,14 @@ ON CONFLICT ("id") DO NOTHING;
 INSERT INTO "VipMember" ("id", "username", "status", "grantedAt", "note")
 VALUES ('vip_mickey_17__', 'mickey_17__', 'probation', NULL, 'Gets one more chance to earn VIP back.')
 ON CONFLICT ("id") DO NOTHING;
+
+-- Prediction page starter setups (one per category used by the site)
+-- Titles stay under Twitch's 45-char limit, options under 25 chars.
+INSERT INTO "Prediction" ("id", "title", "options", "duration", "category", "status", "pinned")
+VALUES
+  ('pred_hype_lvl1',  'Will we complete Lvl 1 Hype Train?',  '["Yes","No"]', '5 minutes', 'hype',     'ready', true),
+  ('pred_treasure',   'Will the Treasure Train be claimed?', '["Yes","No"]', '5 minutes', 'treasure', 'ready', false),
+  ('pred_babu',       'Will Babu arrive before 00:00?',      '["Yes","No"]', '5 minutes', 'babu',     'ready', false),
+  ('pred_satta',      'Will tonight''s SATTA round pay out?', '["Yes","No"]', '5 minutes', 'satta',    'ready', false),
+  ('pred_subgoal',    'Will we hit the sub goal today?',      '["Yes","No"]', '5 minutes', 'custom',   'ready', false)
+ON CONFLICT ("id") DO NOTHING;

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   LayoutDashboard,
   Vote,
@@ -20,7 +20,7 @@ import MoviePlanner from '@/components/center/movie-planner'
 import CommandsReference from '@/components/center/commands-reference'
 import CvTemplates from '@/components/center/cv-templates'
 import ActivityLogView from '@/components/center/activity-log-view'
-import { AdminGate, AdminBanner } from '@/components/center/admin-gate'
+import { AdminGate, AdminBanner, useAdminUnlocked } from '@/components/center/admin-gate'
 import { cn } from '@/lib/utils'
 import type { TabId } from '@/components/center/tab-types'
 
@@ -37,6 +37,15 @@ const tabs = [
 
 export default function Home() {
   const [active, setActive] = useState<TabId>('home')
+  const unlocked = useAdminUnlocked()
+
+  // CV Templates are staff-only: if the site gets locked while the tab is
+  // open, send the visitor back to the dashboard instead of a blank page.
+  useEffect(() => {
+    if (active === 'cv' && !unlocked) setActive('home')
+  }, [active, unlocked])
+
+  const visibleTabs = unlocked ? tabs : tabs.filter((tab) => tab.id !== 'cv')
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -68,7 +77,7 @@ export default function Home() {
         <nav aria-label="Main navigation" className="border-t border-border">
           <div className="mx-auto w-full max-w-6xl overflow-x-auto px-2 sm:px-4">
             <div className="flex min-w-max items-center gap-1">
-              {tabs.map((tab) => {
+              {visibleTabs.map((tab) => {
                 const Icon = tab.icon
                 const isActive = active === tab.id
                 return (
@@ -104,7 +113,7 @@ export default function Home() {
         {active === 'vip' && <VipBoard />}
         {active === 'movies' && <MoviePlanner />}
         {active === 'commands' && <CommandsReference />}
-        {active === 'cv' && <CvTemplates />}
+        {active === 'cv' && unlocked && <CvTemplates />}
         {active === 'logs' && <ActivityLogView />}
       </main>
 
@@ -117,7 +126,6 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <a href="/terms" className="hover:text-foreground">Terms &amp; Conditions</a>
             <a href="/privacy" className="hover:text-foreground">Privacy Policy</a>
-            <span>GitHub + Supabase + Vercel ready</span>
           </div>
         </div>
       </footer>

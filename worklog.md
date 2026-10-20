@@ -159,3 +159,50 @@ Work Log:
 Stage Summary:
 - Site connects to Supabase via the integration's own POSTGRES_PRISMA_URL (no DATABASE_URL needed) and is password-locked for edits via ADMIN_PASSWORD; viewing always public
 - User needs: add ADMIN_PASSWORD in Vercel, push code to GitHub, redeploy; then unlock in the UI with the password to edit
+
+---
+Task ID: 9
+Agent: Main agent (Z.ai)
+Task: Provide Supabase INSERT data for the Prediction page (starter prediction setups)
+
+Work Log:
+- Reviewed predictions-board.tsx + prediction-format.ts + schema to map exact Prediction columns the site reads (title, options JSON string, duration, category hype/treasure/satta/babu/custom, status, pinned)
+- Composed 5 starter predictions, one per category, titles within Twitch 45-char limit, options Yes/No, duration 5 minutes to match the page's session rules
+- Appended the INSERT block (fixed ids pred_*, ON CONFLICT DO NOTHING) to supabase/seed.sql so repo stays consistent
+- Delivered the same SQL to the user for Supabase SQL Editor; no redeploy needed, site reads Prediction table live
+
+Stage Summary:
+- Prediction table starter data ready: 5 ready-to-start setups (Hype pinned); user runs the SQL in Supabase -> cards appear on the Prediction page immediately
+
+---
+Task ID: 10
+Agent: Main agent (Z.ai)
+Task: Remove the VIP Prediction panel from the VIP Board (user request)
+
+Work Log:
+- Removed all VIP Prediction state (predUser/predTitle/predOpt1/predOpt2/predDuration/predCopied/predSaving), predSetup builder, and suggestTitle/pickPredUser/copyPred/savePred functions from src/components/center/vip-board.tsx
+- Removed the VIP Prediction Card JSX block; VIP Board now goes: header actions -> members grid -> VIP history by month
+- Cleaned now-unused imports: copyText, prediction-format constants, cn, Vote/Copy/Check/Save icons
+- Kept /api/predictions and the Predictions page untouched (saved VIP predictions, if any, live there as category 'custom')
+- Verified: tsc --noEmit clean, npm run build succeeds, no leftover pred/Vote/copyText references
+
+Stage Summary:
+- VIP Board slimmed back to members + monthly events + history; VIP Prediction feature fully removed with zero type errors and a passing production build
+- User needs to commit + push to GitHub so Vercel redeploys
+
+---
+Task ID: 11
+Agent: Main agent (Z.ai)
+Task: Hide CV Templates from public, remove footer tech line, de-AI the copy (user request)
+
+Work Log:
+- page.tsx: CV tab now admin-only - visibleTabs filters out 'cv' unless useAdminUnlocked() is true; content guarded with `active === 'cv' && unlocked && <CvTemplates />`; useEffect bounces back to Dashboard if the site gets locked while on the CV tab
+- page.tsx footer: removed "GitHub + Supabase + Vercel ready" span; footer now just site name + Terms + Privacy
+- commands-data.ts: rewrote both CV templates (discord-mod, stream-mod) in plain human tone - dropped AI-style promo copy ("take your server to the next level", "make your server thrive", bold-markdown bullets)
+- cv-templates.tsx: "Pro tip ... best reply rates" replaced with a plain one-line tip
+- Verified: tsc clean, npm run build passes, grep confirms no leftover tech/AI copy
+
+Stage Summary:
+- Public visitors: no CV Templates tab, clean footer; admin (unlocked via password): CV tab appears and works as before
+- Terms/Privacy pages still mention Vercel/Supabase deliberately (legal hosting disclosure - normal for a privacy policy)
+- User needs to commit + push to GitHub for Vercel redeploy

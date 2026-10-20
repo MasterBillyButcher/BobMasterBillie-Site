@@ -72,8 +72,8 @@ export default function CvTemplates() {
       <Card className="bg-secondary/40">
         <CardContent className="flex items-start gap-2 p-4 text-sm text-muted-foreground">
           <MessageSquare className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-          Pro tip: keep both templates pinned, one for Discord servers and one for Twitch/YouTube
-          streamers. Personalize the first line before sending for best reply rates.
+          Tip: keep one template for Discord servers and one for Twitch/YouTube streamers, and
+          change the first line to match who you&apos;re messaging before you send it.
         </CardContent>
       </Card>
     </div>
