@@ -12,10 +12,11 @@ moderation CV templates, and an auto-written activity log that records every sin
 | Dashboard | Backlog Count (+/-) up top: +1 per bits goal completed, -1 per movie watched, so you never watch more or less than expected. Movies to Watch, Movies Watched, an editable backlog ledger with one-tap buttons (date is added automatically), announcements, pinned prediction copy buttons, and the movie calendar at the bottom |
 | Predictions | One clean copy-paste block ready to start a prediction: the command, title, options and duration, nothing extra. Per-field copies with Twitch char limits (title 45, options 25). Mark predictions used with an outcome |
 | Veto Power | Per-viewer cards (Chadboy_hz, Lolwazi, and more) with +/- active veto rights |
-| VIP Board | Separate from veto: VIP members, monthly VIP events (grant / one-chance / revoke / earn-back), history grouped by month, plus a built-in VIP Prediction generator: a ready-to-start Twitch prediction about a member's VIP fate with one copy button, saved to the Predictions board if you want it tracked |
+| VIP Board | Separate from veto: VIP members, monthly VIP events (grant / one-chance / revoke / earn-back), history grouped by month |
 | Movie Backlog | Movies are planned / watching / watched. Plan movies on real calendar dates, click any day to see its movies and logged updates. Marking a movie watched auto-adds a -1 to the backlog count |
-| Commands | Every Twitch, Nightbot and custom command from the doc, searchable, one-tap copy |
-| CV Templates | Discord and Streaming Moderator application templates with copy buttons |
+| Commands | Every Twitch, Nightbot and custom command, searchable, one-tap copy. Unlocked mode can add new commands, edit or remove any of them, and create new sections |
+| CV Templates | Discord and Streaming Moderator application templates with copy buttons (hidden from visitors, admin-only) |
+| Announcements | Ready-to-send channel messages with one-click copy - add, edit, hide or delete them, and optionally show one on the Dashboard |
 | Activity Log | Every change anywhere in the app is auto-logged; filter by type, pin, or write manual log entries |
 
 Every mutation (movie added, veto changed, VIP granted, prediction used) writes an entry to the
@@ -39,15 +40,18 @@ survive on Vercel serverless.
 1. Go to [supabase.com](https://supabase.com) and create a **New project** (free plan is fine).
 2. Open the **SQL Editor** in the Supabase dashboard.
 3. Paste the contents of [`supabase/init.sql`](supabase/init.sql) and click **Run**. This
-   creates all 8 tables.
+   creates all 9 tables.
 4. Paste the contents of [`supabase/seed.sql`](supabase/seed.sql) and click **Run**. This adds
    only the real community data: the two veto contenders (Lolwazi, Chadboy_hz) and the VIP
    board entry (mickey_17__, one more chance). No setup movies, no setup activity logs -
    you add those yourself in the app, and every action is auto-logged from then on.
-5. Already ran an older seed and your live site shows setup data (demo movies, "Backlog
+5. Paste the contents of [`supabase/commands-seed.sql`](supabase/commands-seed.sql) and click
+   **Run**. This creates the Commands table and fills it with the full Twitch / Nightbot /
+   custom command reference (safe to re-run, existing rows are kept).
+6. Already ran an older seed and your live site shows setup data (demo movies, "Backlog
    tracker live" logs, etc.)? Run
    [`supabase/clear-data.sql`](supabase/clear-data.sql) in the SQL Editor first, then run
-   `seed.sql`. clear-data wipes every table but keeps them. This cannot be undone, so only
+   `seed.sql` and `commands-seed.sql`. clear-data wipes every table but keeps them. This cannot be undone, so only
    run it when you are sure.
 6. Get your connection string: **Project Settings -> Database -> Connection string ->
    Connection pooling** (port `6543`). It looks like:
@@ -135,10 +139,10 @@ prisma/schema.postgres.prisma   # production schema (Supabase Postgres)
 supabase/init.sql               # create production tables
 supabase/clear-data.sql         # wipe all production data (one-time reset)
 supabase/seed.sql               # veto contenders + VIP entry only (no setup logs)
+supabase/commands-seed.sql      # Commands table + the full command reference
 src/app                         # pages: dashboard (/), terms, privacy + favicon
-src/app/api                     # REST API (movies, predictions, vetoes, vips, vip-events, backlog-events, logs, announcements, health)
-src/components/center           # Dashboard, Predictions, Veto, VIP, Movie Calendar, Commands, CV, Activity Log
+src/app/api                     # REST API (movies, predictions, vetoes, vips, vip-events, backlog-events, logs, announcements, commands, health)
+src/components/center           # Dashboard, Predictions, Veto, VIP, Movie Calendar, Commands, CV, Announcements, Activity Log
 src/components/ui               # the 15 shadcn/ui primitives actually used
-src/lib/commands-data.ts        # Twitch / Nightbot / custom command reference data
-scripts/seed.ts                 # local dev seed script
+src/lib/commands-data.ts        # CV application templates
 ```

@@ -81,3 +81,13 @@ export type Announcement = {
   createdAt: string
   updatedAt: string
 }
+
+export type Command = {
+  id: string
+  cmd: string
+  description: string
+  group: string
+  sortOrder: number
+  createdAt: string
+  updatedAt: string
+}

@@ -100,3 +100,14 @@ model Announcement {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// 💬 Command reference — Twitch / Nightbot / custom commands, fully editable
+model Command {
+  id          String   @id @default(cuid())
+  cmd         String
+  description String
+  group       String   @default("Custom Commands") // section title, e.g. "Twitch - Basic (Everyone)"
+  sortOrder   Int      @default(0) // order inside its group
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
