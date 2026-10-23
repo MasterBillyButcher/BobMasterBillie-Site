@@ -1,6 +1,11 @@
--- BobMasterBillie Command Center - Commands table + starter commands
--- Paste this whole file into: Supabase Dashboard -> SQL Editor -> New query -> Run
--- Safe to re-run (existing rows are kept, ON CONFLICT DO NOTHING).
+-- =============================================================
+-- BobMasterBillie Command Center - COMMANDS (complete Supabase setup)
+-- Where: Supabase Dashboard -> SQL Editor -> New query -> Paste ALL -> Run
+-- Safe to run again and again - no duplicates will be created.
+-- Section 3 refreshes the Custom Commands rows to match the doc
+-- (emojis, Main Channel / Timepass Time sections) even if an older
+-- version of this seed was run before.
+-- =============================================================
 
 CREATE TABLE IF NOT EXISTS "Command" (
   "id"          TEXT PRIMARY KEY,
@@ -113,16 +118,35 @@ INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cm
 -- Custom Commands - Management
 INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g9_01','!addcom ![Name] [Command]','Add a new custom command','Custom Commands - Management',1) ON CONFLICT ("id") DO NOTHING;
 INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g9_02','!editcom ![Name] [Command]','Edit an existing custom command','Custom Commands - Management',2) ON CONFLICT ("id") DO NOTHING;
-INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g9_03','!editcom !now Currently Watching [New Movie/Show]','Update the"now watching" command','Custom Commands - Management',3) ON CONFLICT ("id") DO NOTHING;
+INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g9_03','!editcom !now 🎥 Currently Watching ➜ [New Movie/Show]','Update the "now watching" command','Custom Commands - Management',3) ON CONFLICT ("id") DO NOTHING;
+INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_10','!addcom !prediction 🗳️ Share your predictions on who will be eliminated this week! 👇 🔗 https://twitch-predcon-frntend-v2.vercel.app/predict','Prediction link command (full copy-paste)','Custom Commands - Management',4) ON CONFLICT ("id") DO NOTHING;
 
--- Custom Commands - Title Presets
-INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_01','!title Indian Streamer Reacts','Movies / Shows title (Main Channel)','Custom Commands - Title Presets',1) ON CONFLICT ("id") DO NOTHING;
-INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_02','!title Indian Streamer Reacts','Shark Tank title (Main Channel)','Custom Commands - Title Presets',2) ON CONFLICT ("id") DO NOTHING;
-INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_03','!title Indian Streamer Reacts','MasterChef title (Main Channel)','Custom Commands - Title Presets',3) ON CONFLICT ("id") DO NOTHING;
-INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_04','!title Indian Streamer Reacts','Splitsvilla title (Main Channel)','Custom Commands - Title Presets',4) ON CONFLICT ("id") DO NOTHING;
-INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_05','!title Timepass Time','Bigg Boss title (Timepass Time Channel)','Custom Commands - Title Presets',5) ON CONFLICT ("id") DO NOTHING;
-INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_06','!title Timepass Time','Movies / Shows title (Timepass Time Channel)','Custom Commands - Title Presets',6) ON CONFLICT ("id") DO NOTHING;
-INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_07','!title Timepass Time','MasterChef title (Timepass Time Channel)','Custom Commands - Title Presets',7) ON CONFLICT ("id") DO NOTHING;
-INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_08','!title Timepass Time','Shark Tank title (Timepass Time Channel)','Custom Commands - Title Presets',8) ON CONFLICT ("id") DO NOTHING;
-INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_09','!title Timepass Time','Splitsvilla title (Timepass Time Channel)','Custom Commands - Title Presets',9) ON CONFLICT ("id") DO NOTHING;
-INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_10','!addcom !prediction Share your predictions on who will be eliminated this week! https://twitch-predcon-frntend-v2.vercel.app/predict','Prediction link command (full copy-paste)','Custom Commands - Title Presets',10) ON CONFLICT ("id") DO NOTHING;
+-- Custom Commands - Main Channel
+INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_01','!title Indian Streamer Reacts 🍿','Movies / Shows Title (Main Channel)','Custom Commands - Main Channel',1) ON CONFLICT ("id") DO NOTHING;
+INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_02','!title Indian Streamer Reacts 💰','Shark Tank Title (Main Channel)','Custom Commands - Main Channel',2) ON CONFLICT ("id") DO NOTHING;
+INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_03','!title Indian Streamer Reacts 👨‍🍳','MasterChef Title (Main Channel)','Custom Commands - Main Channel',3) ON CONFLICT ("id") DO NOTHING;
+INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_04','!title Indian Streamer Reacts 💔','Splitsvilla Title (Main Channel)','Custom Commands - Main Channel',4) ON CONFLICT ("id") DO NOTHING;
+
+-- Custom Commands - Timepass Time
+INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_05','!title Timepass Time 👁️','Bigg Boss Title (Timepass Time Channel)','Custom Commands - Timepass Time',1) ON CONFLICT ("id") DO NOTHING;
+INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_06','!title Timepass Time 🍿','Movies / Shows Title (Timepass Time Channel)','Custom Commands - Timepass Time',2) ON CONFLICT ("id") DO NOTHING;
+INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_07','!title Timepass Time 👨‍🍳','MasterChef Title (Timepass Time Channel)','Custom Commands - Timepass Time',3) ON CONFLICT ("id") DO NOTHING;
+INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_08','!title Timepass Time 💰','Shark Tank Title (Timepass Time Channel)','Custom Commands - Timepass Time',4) ON CONFLICT ("id") DO NOTHING;
+INSERT INTO "Command" ("id","cmd","description","group","sortOrder") VALUES ('cmd_g10_09','!title Timepass Time 💔','Splitsvilla Title (Timepass Time Channel)','Custom Commands - Timepass Time',5) ON CONFLICT ("id") DO NOTHING;
+
+-- ---------------------------------------------------------------
+-- 3) REFRESH CUSTOM COMMANDS (matches your doc exactly)
+-- Updates the 11 rows below if they already exist from an older
+-- seed; if they do not exist yet, the INSERTs above created them.
+-- ---------------------------------------------------------------
+UPDATE "Command" SET "cmd"='!editcom !now 🎥 Currently Watching ➜ [New Movie/Show]', "description"='Update the "now watching" command', "group"='Custom Commands - Management', "sortOrder"=3 WHERE "id"='cmd_g9_03';
+UPDATE "Command" SET "cmd"='!addcom !prediction 🗳️ Share your predictions on who will be eliminated this week! 👇 🔗 https://twitch-predcon-frntend-v2.vercel.app/predict', "description"='Prediction link command (full copy-paste)', "group"='Custom Commands - Management', "sortOrder"=4 WHERE "id"='cmd_g10_10';
+UPDATE "Command" SET "cmd"='!title Indian Streamer Reacts 🍿', "description"='Movies / Shows Title (Main Channel)', "group"='Custom Commands - Main Channel', "sortOrder"=1 WHERE "id"='cmd_g10_01';
+UPDATE "Command" SET "cmd"='!title Indian Streamer Reacts 💰', "description"='Shark Tank Title (Main Channel)', "group"='Custom Commands - Main Channel', "sortOrder"=2 WHERE "id"='cmd_g10_02';
+UPDATE "Command" SET "cmd"='!title Indian Streamer Reacts 👨‍🍳', "description"='MasterChef Title (Main Channel)', "group"='Custom Commands - Main Channel', "sortOrder"=3 WHERE "id"='cmd_g10_03';
+UPDATE "Command" SET "cmd"='!title Indian Streamer Reacts 💔', "description"='Splitsvilla Title (Main Channel)', "group"='Custom Commands - Main Channel', "sortOrder"=4 WHERE "id"='cmd_g10_04';
+UPDATE "Command" SET "cmd"='!title Timepass Time 👁️', "description"='Bigg Boss Title (Timepass Time Channel)', "group"='Custom Commands - Timepass Time', "sortOrder"=1 WHERE "id"='cmd_g10_05';
+UPDATE "Command" SET "cmd"='!title Timepass Time 🍿', "description"='Movies / Shows Title (Timepass Time Channel)', "group"='Custom Commands - Timepass Time', "sortOrder"=2 WHERE "id"='cmd_g10_06';
+UPDATE "Command" SET "cmd"='!title Timepass Time 👨‍🍳', "description"='MasterChef Title (Timepass Time Channel)', "group"='Custom Commands - Timepass Time', "sortOrder"=3 WHERE "id"='cmd_g10_07';
+UPDATE "Command" SET "cmd"='!title Timepass Time 💰', "description"='Shark Tank Title (Timepass Time Channel)', "group"='Custom Commands - Timepass Time', "sortOrder"=4 WHERE "id"='cmd_g10_08';
+UPDATE "Command" SET "cmd"='!title Timepass Time 💔', "description"='Splitsvilla Title (Timepass Time Channel)', "group"='Custom Commands - Timepass Time', "sortOrder"=5 WHERE "id"='cmd_g10_09';

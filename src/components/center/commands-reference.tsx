@@ -37,6 +37,16 @@ function groupBadge(group: string): { label: string; className: string } {
   return { label: 'Commands', className: 'bg-muted text-muted-foreground border-border' }
 }
 
+// Short filter labels - sections collapse into All / Twitch / Nightbot / Custom
+// (any new section you create gets its first word as the chip label)
+function chipFor(group: string): { key: string; label: string } {
+  if (group.startsWith('Twitch')) return { key: 'twitch', label: 'Twitch' }
+  if (group.startsWith('Nightbot')) return { key: 'nightbot', label: 'Nightbot' }
+  if (group.startsWith('Custom')) return { key: 'custom', label: 'Custom' }
+  const word = group.split(' ')[0] || group
+  return { key: word.toLowerCase(), label: word }
+}
+
 export default function CommandsReference() {
   const { data: commands, loading, refetch } = useData<Command[]>('/api/commands', 15000)
   const unlocked = useAdminUnlocked()
@@ -56,8 +66,18 @@ export default function CommandsReference() {
 
   const all = commands ?? []
 
-  // unique groups in the order they appear (seed order preserved)
-  const groups = useMemo(() => {
+  // unique filter chips in the order they appear (seed order preserved)
+  const chips = useMemo(() => {
+    const seen: Array<{ key: string; label: string }> = []
+    for (const c of all) {
+      const chip = chipFor(c.group)
+      if (!seen.some((s) => s.key === chip.key)) seen.push(chip)
+    }
+    return seen
+  }, [all])
+
+  // full section names for the "New Command" dropdown suggestions
+  const groupNames = useMemo(() => {
     const seen: string[] = []
     for (const c of all) if (!seen.includes(c.group)) seen.push(c.group)
     return seen
@@ -67,7 +87,7 @@ export default function CommandsReference() {
     const q = query.trim().toLowerCase()
     return all.filter(
       (c) =>
-        (activeGroup === 'all' || c.group === activeGroup) &&
+        (activeGroup === 'all' || chipFor(c.group).key === activeGroup) &&
         (!q || c.cmd.toLowerCase().includes(q) || c.description.toLowerCase().includes(q))
     )
   }, [all, query, activeGroup])
@@ -97,7 +117,8 @@ export default function CommandsReference() {
     setEditId(null)
     setCmd('')
     setDescription('')
-    setGroup(activeGroup === 'all' ? 'Custom Commands' : activeGroup)
+    const match = all.find((c) => chipFor(c.group).key === activeGroup)
+    setGroup(activeGroup === 'all' || !match ? 'Custom Commands' : match.group)
     setOpen(true)
   }
 
@@ -185,7 +206,7 @@ export default function CommandsReference() {
                   placeholder="e.g. Custom Commands"
                 />
                 <datalist id="command-groups">
-                  {groups.map((g) => (
+                  {groupNames.map((g) => (
                     <option key={g} value={g} />
                   ))}
                 </datalist>
@@ -243,18 +264,15 @@ export default function CommandsReference() {
           >
             All
           </Button>
-          {groups.map((g) => (
+          {chips.map((chip) => (
             <Button
-              key={g}
+              key={chip.key}
               size="sm"
-              variant={activeGroup === g ? 'default' : 'outline'}
-              className={cn(
-                'h-8 max-w-56 truncate',
-                activeGroup === g && 'text-primary-foreground'
-              )}
-              onClick={() => setActiveGroup(g)}
+              variant={activeGroup === chip.key ? 'default' : 'outline'}
+              className={cn('h-8', activeGroup === chip.key && 'text-primary-foreground')}
+              onClick={() => setActiveGroup(chip.key)}
             >
-              {g}
+              {chip.label}
             </Button>
           ))}
           <span className="ml-auto text-xs text-muted-foreground">
