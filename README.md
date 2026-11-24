@@ -1,212 +1,246 @@
-🎮 BobMasterBillie Command Center
-Your Community. Your Commands. Everything in One Place.
 
-A complete community management hub built for @BobMasterBillie.
+# 🎮 BobMasterBillie Command Center
 
-The BobMasterBillie Command Center brings Twitch predictions, community privileges, VIP management, movie planning, moderation resources, announcements, and activity tracking together in one organized, easy-to-use dashboard.
+### Your Community. Your Commands. Everything in One Place.
 
-Designed to make streaming community management simpler, faster, and more organized.
+A complete community management hub built for **[@BobMasterBillie](https://twitch.tv/BobMasterBillie)**.
 
-✨ Features
-📊 Dashboard
+Manage Twitch predictions, Veto Power, VIP memberships, movie nights, moderator resources, announcements, and community activity — all from one centralized dashboard.
 
-Your community overview, all in one place.
+<p align="center">
+  <strong>🎯 Predictions • 👑 VIP Management • 🎬 Movie Planning • 🤖 Twitch Commands • 📊 Activity Tracking</strong>
+</p>
 
-Live movie backlog counter.
-Movies to Watch and Movies Watched tracking.
-Editable movie backlog ledger.
-Automatic date tracking.
-Quick-access announcements.
-Pinned Twitch prediction setups.
-Integrated movie calendar.
-🎯 Predictions
+---
 
-Create and manage Twitch predictions with ease.
+## ✨ Features
 
-Ready-to-copy prediction setups.
-Prediction titles, options, and durations.
-Individual copy buttons for each field.
-Twitch character-limit awareness.
-Track predictions you've already used.
-Record prediction outcomes.
-⚡ Veto Power
+<table>
+  <tr>
+    <td width="50%">
+      <h3>📊 Dashboard</h3>
+      <ul>
+        <li>Live movie backlog counter</li>
+        <li>Movies to Watch and Movies Watched</li>
+        <li>Editable backlog ledger</li>
+        <li>Automatic date tracking</li>
+        <li>Pinned predictions and announcements</li>
+        <li>Integrated movie calendar</li>
+      </ul>
+    </td>
+    <td width="50%">
+      <h3>🎯 Predictions</h3>
+      <ul>
+        <li>Ready-to-copy Twitch predictions</li>
+        <li>Titles, options, and durations</li>
+        <li>Individual copy buttons</li>
+        <li>Twitch character-limit awareness</li>
+        <li>Prediction usage tracking</li>
+        <li>Outcome recording</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h3>⚡ Veto Power</h3>
+      <ul>
+        <li>Individual viewer cards</li>
+        <li>Adjustable active veto rights</li>
+        <li>Add or remove veto power</li>
+        <li>Community privilege tracking</li>
+      </ul>
+    </td>
+    <td>
+      <h3>👑 VIP Board</h3>
+      <ul>
+        <li>Separate VIP management</li>
+        <li>Monthly VIP events</li>
+        <li>Grant and revoke privileges</li>
+        <li>One-more-chance tracking</li>
+        <li>Earn-back options</li>
+        <li>Monthly membership history</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h3>🎬 Movie Backlog & Calendar</h3>
+      <ul>
+        <li>Plan movies in advance</li>
+        <li>Planned, Watching, and Watched statuses</li>
+        <li>Schedule movies on calendar dates</li>
+        <li>View movies by date</li>
+        <li>Automatic backlog adjustments</li>
+        <li>Movie activity history</li>
+      </ul>
+    </td>
+    <td>
+      <h3>🤖 Twitch & Nightbot Commands</h3>
+      <ul>
+        <li>Twitch command reference</li>
+        <li>Nightbot commands</li>
+        <li>Custom community commands</li>
+        <li>Searchable command library</li>
+        <li>One-click copying</li>
+        <li>Administrative command management</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h3>🚀 Quick Copy</h3>
+      <ul>
+        <li>Open with <code>Ctrl + K</code></li>
+        <li>Search across commands, predictions, and announcements</li>
+        <li>Press Enter to copy</li>
+        <li>Recent copies remembered on-device</li>
+        <li>Floating Quick Copy button</li>
+      </ul>
+    </td>
+    <td>
+      <h3>🛡️ Moderator CV Templates</h3>
+      <ul>
+        <li>Discord Moderator applications</li>
+        <li>Streaming Moderator applications</li>
+        <li>Ready-to-copy templates</li>
+        <li>Administrator-only access</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h3>📢 Announcements</h3>
+      <ul>
+        <li>Create and edit announcements</li>
+        <li>Hide or delete messages</li>
+        <li>One-click copying</li>
+        <li>Pin announcements to Dashboard</li>
+      </ul>
+    </td>
+    <td>
+      <h3>📝 Activity Log</h3>
+      <ul>
+        <li>Automatic activity tracking</li>
+        <li>Movie and prediction updates</li>
+        <li>Veto and VIP changes</li>
+        <li>Announcement history</li>
+        <li>Manual activity entries</li>
+        <li>Filtering and pinning</li>
+      </ul>
+    </td>
+  </tr>
+</table>
 
-A dedicated space for managing community veto privileges.
+---
 
-Individual viewer cards.
-Adjustable active veto rights.
-Add or remove available veto power.
-Keep track of community privileges.
-👑 VIP Board
+## 🔐 Access & Permissions
 
-A dedicated VIP management system, separate from Veto Power.
+The Command Center supports two access levels.
 
-Manage VIP members.
-Monthly VIP events.
-Grant VIP privileges.
-One-more-chance tracking.
-Revoke and earn-back options.
-Monthly membership history.
-🎬 Movie Backlog & Calendar
+| Access Level | Permissions |
+|:---|:---|
+| 👀 Visitors | Browse and view community information |
+| 🔑 Administrators | Manage content, movies, predictions, VIPs, vetoes, commands, announcements, and activity records |
 
-Keep movie nights organized.
+Administrative access is protected by private credentials. Visitors can browse the application without administrative access.
 
-Plan movies in advance.
-Track planned, watching, and watched movies.
-Schedule movies on specific calendar dates.
-Select a date to view its scheduled movies.
-Automatically update the backlog when a movie is marked watched.
-Keep a history of movie-related updates.
-🤖 Twitch & Nightbot Commands
+---
 
-Your complete command reference in one place.
+## 🛠️ Technology Stack
 
-Twitch commands.
-Nightbot commands.
-Custom community commands.
-Searchable command library.
-One-click copy functionality.
-Administrative tools to add, edit, and remove commands.
-Create custom command categories.
-🚀 Quick Copy
+Built using modern web technologies.
 
-Find what you need without switching tabs.
+| Technology | Purpose |
+|:---|:---|
+| Next.js 16 | Application framework |
+| React | User interface |
+| TypeScript | Type-safe development |
+| Prisma | Database management |
+| SQLite | Local development |
+| PostgreSQL | Production database |
+| Supabase | Managed database hosting |
+| Vercel | Application deployment |
+| GitHub | Source code management |
 
-Open using Ctrl + K.
-Search commands, predictions, and announcements.
-Press Enter to copy.
-Access frequently used content quickly.
-Recent copies are remembered on your device.
-Floating Quick Copy button for easy access.
-🛡️ Moderator CV Templates
+---
 
-Resources for moderator applications.
+## 🚀 Deployment
 
-Discord Moderator application template.
-Streaming Moderator application template.
-Ready-to-copy application formats.
-Administrative access to template management.
-📢 Announcements
+The application is designed to work with a modern hosting setup.
 
-Keep community messages ready to send.
+### Hosting Services
 
-Create announcements.
-Edit existing messages.
-Hide or delete announcements.
-Copy messages instantly.
-Pin announcements to the dashboard.
-📝 Activity Log
+- **GitHub** — Source code management and version control.
+- **Supabase** — Production database hosting.
+- **Vercel** — Application hosting and deployment.
 
-Keep track of what happens across the Command Center.
+### Getting Started
 
-Automatic activity tracking.
-Movie updates.
-Prediction activity.
-Veto changes.
-VIP membership updates.
-Announcement changes.
-Manual activity entries.
-Filter and pin important records.
-Organize history by activity type.
-🔐 Access & Permissions
+1. Clone or download the project.
+2. Install the required dependencies.
+3. Configure your local development environment.
+4. Initialize the development database.
+5. Start the development server.
+6. Configure your production hosting services.
+7. Deploy the application.
+8. Verify that everything is working correctly.
 
-The Command Center is designed with two access levels:
+> Detailed deployment and database setup instructions should be maintained separately from public documentation.
 
-Visitors
+---
 
-Browse the dashboard.
-View community information.
-Explore available commands and resources.
+## 🔄 Updates & Maintenance
 
-Administrators
+The Command Center is designed for convenient ongoing maintenance.
 
-Manage community information.
-Update movies and predictions.
-Manage Veto Power and VIP membership.
-Edit commands and announcements.
-Access administrative templates.
-Manage activity records.
+- Automatic deployments through connected source control.
+- Centralized community management.
+- Persistent production data storage.
+- Automatic activity tracking.
+- Organized community records.
+- Regular dependency updates.
 
-Administrative access is protected by private credentials.
+---
 
-🛠️ Technology Stack
+## 🔒 Security & Privacy
 
-Built using modern web technologies for a responsive and reliable experience.
+Security and privacy are important parts of the project.
 
-Technology	Purpose
-Next.js	Application framework
-React	User interface
-TypeScript	Type-safe development
-Prisma	Database management
-PostgreSQL	Production database
-SQLite	Local development
-Supabase	Managed database hosting
-Vercel	Application deployment
-GitHub	Source code management
-🚀 Deployment
+- Administrative access is restricted.
+- Visitors have read-only access.
+- Sensitive configuration is kept private.
+- Database credentials are not included in public documentation.
+- Administrative credentials must never be committed to source control.
 
-The project is designed for straightforward deployment using free-tier hosting options where available.
+**Important:** Never publish private environment files, passwords, database connection strings, or other sensitive information.
 
-Hosting
-GitHub – Store and manage the project source code.
-Supabase – Host the production database.
-Vercel – Deploy and host the web application.
-Getting Started
-Clone or download the project.
-Install the required dependencies.
-Configure your local development environment.
-Initialize the development database.
-Start the development server.
-Connect your production hosting services when ready.
-Deploy your application.
+---
 
-For detailed deployment instructions, use the private project setup documentation.
+## 🎯 Project Goals
 
-🔄 Updates & Maintenance
+The BobMasterBillie Command Center was created to make community management easier.
 
-The Command Center is designed to be easy to maintain.
+- 🎮 Simplify Twitch community management.
+- 🎯 Keep predictions organized and ready to use.
+- ⚡ Manage community Veto Power.
+- 👑 Organize VIP memberships and monthly events.
+- 🎬 Make movie planning and tracking effortless.
+- 🤖 Keep Twitch and Nightbot commands accessible.
+- 📢 Make announcements easy to manage.
+- 📝 Maintain a reliable history of community activity.
 
-Automatic deployment through connected source control.
-Centralized community management.
-Persistent production data storage.
-Automatic activity tracking.
-Organized community records.
-Regular maintenance and dependency updates.
-🔒 Security & Privacy
+---
 
-Security is an important part of the Command Center.
+## 💜 Built For @BobMasterBillie
 
-Administrative access is restricted.
-Visitors have read-only access.
-Sensitive configuration is kept outside public documentation.
-Database credentials should remain private.
-Administrative credentials should never be committed to source control.
+Created with the goal of bringing the entire community management experience together in one place.
 
-Never publish private environment files, passwords, database connection strings, or other sensitive information.
+**One dashboard. One community. Everything organized.**
 
-🎯 Project Goals
+---
 
-The BobMasterBillie Command Center was created to:
-
-Make Twitch community management easier.
-Keep predictions organized and ready to use.
-Track community Veto Power and VIP privileges.
-Organize monthly VIP events.
-Make movie planning and tracking effortless.
-Keep Twitch and Nightbot commands accessible.
-Provide quick access to announcements.
-Maintain a reliable history of community activity.
-
-One dashboard. One community. Everything organized.
-
-💜 Built For
-
-@BobMasterBillie
-
-Created to support the community, improve stream management, and bring everything together in one place.
-
-Thank you for being part of the community!
-
-© BobMasterBillie Command Center. All rights reserved.
-
-Made with 💜 for the BobMasterBillie community.
+<p align="center">
+  <strong>💜 Made with love for the BobMasterBillie community.</strong>
+  <br>
+  <sub>© BobMasterBillie Command Center. All rights reserved.</sub>
+</p>
