@@ -1,0 +1,23 @@
+{
+  "name": "BobMasterBillie Command Center",
+  "short_name": "BMB Center",
+  "description": "Prediction setups, the backlog counter, vetoes, VIP board, movie calendar and every stream command - one tap to copy.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#131313",
+  "theme_color": "#131313",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
