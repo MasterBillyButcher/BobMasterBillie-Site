@@ -1,151 +1,212 @@
-# BobMasterBillie Command Center
+🎮 BobMasterBillie Command Center
+Your Community. Your Commands. Everything in One Place.
 
-The whole community doc, live in the browser. Built for **@BobMasterBillie**: Twitch
-prediction setups you copy-paste straight into chat, separate Veto Power and VIP boards with
-monthly VIP events, a movie planner calendar, the full Twitch/Nightbot command reference,
-moderation CV templates, and an auto-written activity log that records every single update.
-A Quick Copy palette (Ctrl K, or the floating button) puts every command, prediction and
-announcement one search away from any tab.
+A complete community management hub built for @BobMasterBillie.
 
-## Features
+The BobMasterBillie Command Center brings Twitch predictions, community privileges, VIP management, movie planning, moderation resources, announcements, and activity tracking together in one organized, easy-to-use dashboard.
 
-| Section | What it does |
-|---------|--------------|
-| Dashboard | Backlog Count (+/-) up top: +1 per bits goal completed, -1 per movie watched, so you never watch more or less than expected. Movies to Watch, Movies Watched, an editable backlog ledger with one-tap buttons (date is added automatically), announcements, pinned prediction copy buttons, and the movie calendar at the bottom |
-| Predictions | One clean copy-paste block ready to start a prediction: the command, title, options and duration, nothing extra. Per-field copies with Twitch char limits (title 45, options 25). Mark predictions used with an outcome |
-| Veto Power | Per-viewer cards (Chadboy_hz, Lolwazi, and more) with +/- active veto rights |
-| VIP Board | Separate from veto: VIP members, monthly VIP events (grant / one-chance / revoke / earn-back), history grouped by month |
-| Movie Backlog | Movies are planned / watching / watched. Plan movies on real calendar dates, click any day to see its movies and logged updates. Marking a movie watched auto-adds a -1 to the backlog count |
-| Commands | Every Twitch, Nightbot and custom command, searchable, one-tap copy. Unlocked mode can add new commands, edit or remove any of them, and create new sections |
-| Quick Copy | Copy anything without navigating: press Ctrl K (or tap the floating Quick copy button) and search across every command, prediction setup and announcement - Enter copies, recent copies are remembered on the device |
-| CV Templates | Discord and Streaming Moderator application templates with copy buttons (hidden from visitors, admin-only) |
-| Announcements | Ready-to-send channel messages with one-click copy - add, edit, hide or delete them, and optionally show one on the Dashboard |
-| Activity Log | Every change anywhere in the app is auto-logged; filter by type, pin, or write manual log entries |
+Designed to make streaming community management simpler, faster, and more organized.
 
-Every mutation (movie added, veto changed, VIP granted, prediction used) writes an entry to the
-Activity Log automatically, so "every log and every update" lives here, not in a doc.
+✨ Features
+📊 Dashboard
 
-The site is read-only for visitors: an admin password (the `ADMIN_PASSWORD` environment
-variable) must be entered once with the Locked button in the header before anything can be
-edited. Viewing is always open.
+Your community overview, all in one place.
 
-The site also ships a favicon, a Terms & Conditions page (`/terms`) and a Privacy Policy page
-(`/privacy`), both linked from the footer.
+Live movie backlog counter.
+Movies to Watch and Movies Watched tracking.
+Editable movie backlog ledger.
+Automatic date tracking.
+Quick-access announcements.
+Pinned Twitch prediction setups.
+Integrated movie calendar.
+🎯 Predictions
 
-## Deploy it free: GitHub + Supabase + Vercel
+Create and manage Twitch predictions with ease.
 
-The app is a standard **Next.js 16** project using **Prisma**. Locally it runs on SQLite; in
-production it connects to **Supabase Postgres** (free tier), because file databases don't
-survive on Vercel serverless.
+Ready-to-copy prediction setups.
+Prediction titles, options, and durations.
+Individual copy buttons for each field.
+Twitch character-limit awareness.
+Track predictions you've already used.
+Record prediction outcomes.
+⚡ Veto Power
 
-### Step 1: Create the Supabase database (free)
+A dedicated space for managing community veto privileges.
 
-1. Go to [supabase.com](https://supabase.com) and create a **New project** (free plan is fine).
-2. Open the **SQL Editor** in the Supabase dashboard.
-3. Paste the contents of [`supabase/init.sql`](supabase/init.sql) and click **Run**. This
-   creates all 9 tables.
-4. Paste the contents of [`supabase/seed.sql`](supabase/seed.sql) and click **Run**. This adds
-   only the real community data: the two veto contenders (Lolwazi, Chadboy_hz) and the VIP
-   board entry (mickey_17__, one more chance). No setup movies, no setup activity logs -
-   you add those yourself in the app, and every action is auto-logged from then on.
-5. Paste the contents of [`supabase/commands-seed.sql`](supabase/commands-seed.sql) and click
-   **Run**. This creates the Commands table and fills it with the full Twitch / Nightbot /
-   custom command reference (safe to re-run, existing rows are kept).
-6. Already ran an older seed and your live site shows setup data (demo movies, "Backlog
-   tracker live" logs, etc.)? Run
-   [`supabase/clear-data.sql`](supabase/clear-data.sql) in the SQL Editor first, then run
-   `seed.sql` and `commands-seed.sql`. clear-data wipes every table but keeps them. This cannot be undone, so only
-   run it when you are sure.
-6. Get your connection string: **Project Settings -> Database -> Connection string ->
-   Connection pooling** (port `6543`). It looks like:
-   ```
-   postgresql://postgres.<project-ref>:<YOUR-PASSWORD>@aws-0-<region>.pooler.supabase.com:6543/postgres
-   ```
-   Append `?pgbouncer=true&connection_limit=1` to the end (needed for serverless).
-   Keep this string secret, you will paste it into Vercel in Step 3.
+Individual viewer cards.
+Adjustable active veto rights.
+Add or remove available veto power.
+Keep track of community privileges.
+👑 VIP Board
 
-### Step 2: Push the code to GitHub
+A dedicated VIP management system, separate from Veto Power.
 
-```bash
-# from this project folder
-git init
-git add .
-git commit -m "BobMasterBillie Command Center"
-git branch -M main
-git remote add origin https://github.com/<your-username>/bobmasterbillie-command-center.git
-git push -u origin main
-```
+Manage VIP members.
+Monthly VIP events.
+Grant VIP privileges.
+One-more-chance tracking.
+Revoke and earn-back options.
+Monthly membership history.
+🎬 Movie Backlog & Calendar
 
-> Don't want the terminal? Create the repo on github.com, then use GitHub's
-> "uploading an existing file" flow (drag-and-drop the project files).
-> `.env` is git-ignored, so your local database never gets uploaded.
+Keep movie nights organized.
 
-### Step 3: Deploy on Vercel (free)
+Plan movies in advance.
+Track planned, watching, and watched movies.
+Schedule movies on specific calendar dates.
+Select a date to view its scheduled movies.
+Automatically update the backlog when a movie is marked watched.
+Keep a history of movie-related updates.
+🤖 Twitch & Nightbot Commands
 
-1. Go to [vercel.com](https://vercel.com), click **Add New -> Project** and import your GitHub
-   repo.
-2. Framework preset: **Next.js** (auto-detected). Don't touch the build command:
-   [`vercel.json`](vercel.json) already points Prisma at the Postgres schema.
-3. Connect the database. Two ways that both work:
-   - **Supabase x Vercel integration:** connect the two projects from the Vercel
-     "Integrations" or Supabase "Connect" flow. It creates `POSTGRES_PRISMA_URL` and friends
-     automatically, and the site reads those, so nothing else is needed, or
-   - **Manual variable:** add `DATABASE_URL` with the Supabase pooled connection string from
-     Step 1.
-   The site checks `DATABASE_URL` first, then `POSTGRES_PRISMA_URL`, then `POSTGRES_URL`, so
-   any of the three connects it.
-4. Add the admin password variable:
-   - **Key:** `ADMIN_PASSWORD`
-   - **Value:** any strong password you choose. The site is READ-ONLY until this password is
-     entered with the Locked button in the header. Everyone can view; only the password
-     holder can change anything.
-5. Click **Deploy**.
+Your complete command reference in one place.
 
-Your Command Center will be live at `https://<your-project>.vercel.app`. Open it, and every
-change you make saves to Supabase and appears in the Activity Log.
+Twitch commands.
+Nightbot commands.
+Custom community commands.
+Searchable command library.
+One-click copy functionality.
+Administrative tools to add, edit, and remove commands.
+Create custom command categories.
+🚀 Quick Copy
 
-### Step 3.5: Verify the database connection
+Find what you need without switching tabs.
 
-Open `https://<your-project>.vercel.app/api/health`. You should see:
+Open using Ctrl + K.
+Search commands, predictions, and announcements.
+Press Enter to copy.
+Access frequently used content quickly.
+Recent copies are remembered on your device.
+Floating Quick Copy button for easy access.
+🛡️ Moderator CV Templates
 
-```json
-{ "status": "ok", "database": "connected", "counts": { "movies": 0, ... } }
-```
+Resources for moderator applications.
 
-All counts start at 0 - that is correct, the site is clean and waiting for your data. If you
-get `"database": "unreachable"` instead, the `DATABASE_URL` in Vercel is wrong or
-`init.sql` was not run - fix that and redeploy.
+Discord Moderator application template.
+Streaming Moderator application template.
+Ready-to-copy application formats.
+Administrative access to template management.
+📢 Announcements
 
-### Step 4: Keep it alive
+Keep community messages ready to send.
 
-- **Supabase free projects pause after about a week of inactivity.** Open the dashboard once a
-  week (or stream more) to keep it awake. Restoring is one click.
-- Vercel's free "Hobby" tier covers personal projects like this one.
-- Every future `git push` to `main` auto-redeploys the site.
+Create announcements.
+Edit existing messages.
+Hide or delete announcements.
+Copy messages instantly.
+Pin announcements to the dashboard.
+📝 Activity Log
 
-## Local development (optional)
+Keep track of what happens across the Command Center.
 
-```bash
-bun install               # or npm install
-bun run db:push           # create the local SQLite database
-bun run dev               # start the dev server
-```
+Automatic activity tracking.
+Movie updates.
+Prediction activity.
+Veto changes.
+VIP membership updates.
+Announcement changes.
+Manual activity entries.
+Filter and pin important records.
+Organize history by activity type.
+🔐 Access & Permissions
 
-The local database starts empty too. To wipe everything and start over, run
-`bun run scripts/seed.ts` (it clears all tables and inserts nothing).
+The Command Center is designed with two access levels:
 
-## Project structure
+Visitors
 
-```
-prisma/schema.prisma            # local dev schema (SQLite)
-prisma/schema.postgres.prisma   # production schema (Supabase Postgres)
-supabase/init.sql               # create production tables
-supabase/clear-data.sql         # wipe all production data (one-time reset)
-supabase/seed.sql               # veto contenders + VIP entry only (no setup logs)
-supabase/commands-seed.sql      # Commands table + the full command reference
-src/app                         # pages: dashboard (/), terms, privacy + favicon
-src/app/api                     # REST API (movies, predictions, vetoes, vips, vip-events, backlog-events, logs, announcements, commands, health)
-src/components/center           # Dashboard, Predictions, Veto, VIP, Movie Calendar, Commands, CV, Announcements, Activity Log
-src/components/ui               # the 15 shadcn/ui primitives actually used
-src/lib/commands-data.ts        # CV application templates
-```
+Browse the dashboard.
+View community information.
+Explore available commands and resources.
+
+Administrators
+
+Manage community information.
+Update movies and predictions.
+Manage Veto Power and VIP membership.
+Edit commands and announcements.
+Access administrative templates.
+Manage activity records.
+
+Administrative access is protected by private credentials.
+
+🛠️ Technology Stack
+
+Built using modern web technologies for a responsive and reliable experience.
+
+Technology	Purpose
+Next.js	Application framework
+React	User interface
+TypeScript	Type-safe development
+Prisma	Database management
+PostgreSQL	Production database
+SQLite	Local development
+Supabase	Managed database hosting
+Vercel	Application deployment
+GitHub	Source code management
+🚀 Deployment
+
+The project is designed for straightforward deployment using free-tier hosting options where available.
+
+Hosting
+GitHub – Store and manage the project source code.
+Supabase – Host the production database.
+Vercel – Deploy and host the web application.
+Getting Started
+Clone or download the project.
+Install the required dependencies.
+Configure your local development environment.
+Initialize the development database.
+Start the development server.
+Connect your production hosting services when ready.
+Deploy your application.
+
+For detailed deployment instructions, use the private project setup documentation.
+
+🔄 Updates & Maintenance
+
+The Command Center is designed to be easy to maintain.
+
+Automatic deployment through connected source control.
+Centralized community management.
+Persistent production data storage.
+Automatic activity tracking.
+Organized community records.
+Regular maintenance and dependency updates.
+🔒 Security & Privacy
+
+Security is an important part of the Command Center.
+
+Administrative access is restricted.
+Visitors have read-only access.
+Sensitive configuration is kept outside public documentation.
+Database credentials should remain private.
+Administrative credentials should never be committed to source control.
+
+Never publish private environment files, passwords, database connection strings, or other sensitive information.
+
+🎯 Project Goals
+
+The BobMasterBillie Command Center was created to:
+
+Make Twitch community management easier.
+Keep predictions organized and ready to use.
+Track community Veto Power and VIP privileges.
+Organize monthly VIP events.
+Make movie planning and tracking effortless.
+Keep Twitch and Nightbot commands accessible.
+Provide quick access to announcements.
+Maintain a reliable history of community activity.
+
+One dashboard. One community. Everything organized.
+
+💜 Built For
+
+@BobMasterBillie
+
+Created to support the community, improve stream management, and bring everything together in one place.
+
+Thank you for being part of the community!
+
+© BobMasterBillie Command Center. All rights reserved.
+
+Made with 💜 for the BobMasterBillie community.
