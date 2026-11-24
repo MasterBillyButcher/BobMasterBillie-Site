@@ -3,7 +3,7 @@
 
 ### Your Community. Your Commands. Everything in One Place.
 
-A complete community management hub built for **[@BobMasterBillie](https://twitch.tv/BobMasterBillie)**.
+A complete community management hub built for **.......**.
 
 Manage Twitch predictions, Veto Power, VIP memberships, movie nights, moderator resources, announcements, and community activity — all from one centralized dashboard.
 
