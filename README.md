@@ -231,7 +231,7 @@ The BobMasterBillie Command Center was created to make community management easi
 
 ---
 
-## 💜 Built For @BobMasterBillie
+## 💜 Built For .....
 
 Created with the goal of bringing the entire community management experience together in one place.
 
@@ -240,7 +240,7 @@ Created with the goal of bringing the entire community management experience tog
 ---
 
 <p align="center">
-  <strong>💜 Made with love for the BobMasterBillie community.</strong>
+  <strong>💜 Made with love for the ...... community.</strong>
   <br>
   <sub>© BobMasterBillie Command Center. All rights reserved.</sub>
 </p>
